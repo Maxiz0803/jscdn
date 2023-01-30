@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取b房播放信息
 // @namespace    https://space.bilibili.com/52758366
-// @version      1.5
+// @version      1.6
 // @description  try to take over the world!去直播水印
 // @author       mxk-zwh
 // @include        /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
@@ -47,7 +47,7 @@ async function checkUrl(urlString,w){
 
             }
         }else{
-            noRightUrl(banReg,ebanReg,apiReg,urlString)
+            noRightUrl(banReg,ebanReg,urlString)
         }
     }
 }
@@ -167,8 +167,10 @@ function getvlc(r){
     }
 
 }
-function waterMarker(){
-    document.querySelector('.web-player-icon-roomStatus').style.opacity=0;
+async function waterMarker(){
+    let icon=await document.querySelector('.web-player-icon-roomStatus')||
+        document.querySelector('div#player-ctnr iframe').contentWindow.document.querySelector('.web-player-icon-roomStatus')
+    icon.style.opacity=await 0;
 }
 function noRightUrl(banReg,ebanReg,apiReg,urlString){
     if(banReg.test(urlString)){
