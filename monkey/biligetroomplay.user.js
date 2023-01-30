@@ -3,7 +3,7 @@
 // @namespace    https://space.bilibili.com/52758366
 // @version      1.5
 // @description  try to take over the world!去直播水印
-// @author       Maxiz0803
+// @author       mxk-zwh
 // @include        /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
 // @require        https://static.hdslb.com/js/jquery.min.js
 // @require        https://cdn.jsdelivr.net/gh/mxk-zwh/jscdn/asset/echo.min.js
