@@ -206,12 +206,13 @@ async function showid(r){
     let a=await BAPI.live_user.get_anchor_in_room(roomid)
     let uname=a.data.info.uname
     buildlips(uname,roomid,shortid,uid)
+
     echo.log();
     echo.group( echo.asWarning( "b站信息" ) );
     echo.log( echo.asAlert( "up主名" ), echo.asWarning(uname) );
-    echo.log( echo.asAlert( "当前直播间号" ),echo.asWarning( roomid) );
-    echo.log( echo.asAlert( "up主号" ), echo.asWarning(upid) );
-    echo.log( echo.asAlert( "短位号" ),echo.asWarning( shortid) );
+    echo.log( echo.asAlert( "房间号" ),echo.asWarning( roomid) );
+    echo.log( echo.asAlert( "短位号" ),echo.asWarning(shortid) );
+    echo.log( echo.asAlert( "up主号" ), echo.asWarning(uid) );
     echo.groupEnd();
     echo.log();
 
