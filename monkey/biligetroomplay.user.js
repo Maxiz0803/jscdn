@@ -5,7 +5,6 @@
 // @description  try to take over the world!去直播水印
 // @author       Maxiz0803
 // @include        /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
-// @match        *://api.live.bilibili.com/xlive/web-room/v*/index/getRoomPlayInfo*
 // @require        https://static.hdslb.com/js/jquery.min.js
 // @require        https://cdn.jsdelivr.net/gh/Maxiz0803/jscdn/asset/echo.min.js
 // @require        https://cdn.jsdelivr.net/gh/andywang425/BLTH@dac0d115a45450e6d3f3e17acd4328ab581d0514/assets/js/library/Ajax-hook.min.js
@@ -42,8 +41,7 @@ async function checkUrl(urlString,w){
                 buildstyle1()
                 buildlink()
                 echoLog(roomid,upid)
-                //去水印
-                waterMarker()
+                
             }else{
                 echo.log("获取不到")
 
@@ -277,6 +275,8 @@ function isLiving(r){
             break;
         case 1:
             $('#sign_ornot').append(l1)
+            //去水印
+            waterMarker()
             getvlc(r);
             break;
         case 2:
@@ -312,6 +312,3 @@ function buildi(){
     var i="<i class='iconfont icon-fuzhi'></i>"
     return i
 }
-
-
-start()
