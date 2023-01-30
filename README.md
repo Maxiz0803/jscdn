@@ -1,4 +1,6 @@
 # jscdn
+I use these for the learn. 
+I dont undertake the consequence.
 
 <details>
 <summary>no things</summary>
