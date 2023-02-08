@@ -4,6 +4,7 @@
 // @version      1.1
 // @description  2233 漫画
 // @author       mxk-zwh
+// @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMeSURBVHgBvZi/TxNhGMe/97al/DDYOvhjMJakg4MJ7UjQeEyuNf4B4OBmgm4uhhAnJ2VwBnaHjm4cQcJoSRwcaqhxMHGQihQEeu/r8xwtFnrXu/e9wic5uPS9H5+8z/P+eM6CJvbGfg7uYQkJaxxS2VDIwKKDUajTeQ2WVaO2VRzJsjOVrWk8nm6PKrK+M0NXT0ORhB4Ves2CMzm6FOXiUCF77Y8NIRfpNId41Oh182FigUL2ynYG6eQclHyGfmKJtzhozlMo677N8JfJIWWVKRfGcT7UcCin/PLL8pUZECuIHyIjKeuMTIZkPl2ATJtKS+okfOJUM+dMDJlHNwbw5s4ILiUjD95C653oEvKGdYwEnr6ZxtOxQRRGE1r38TvttW27S4ha5mAIy8zQwVQbErtNBS2EWDwl5PWOYag6ZZjKThMG5FoO7R5SszDgrAzzteHCCF4F+F9rmG9BkwdXU3iRH+r6/clmg8JmKCXkmEBKlKBJkAznjrEM44oSh8zWuSdIhqnuScSCVgZBsbsV9fpeMkzlt1FCd6DsJCKOrjAZ5u6VFAqXk4HtL7/shU0JGb47gxAKo8lQGSY/Inq2X08LVJs9cyzT+wmth7y6HS4TxuvqfqSE5x7ihS2wl3Zd1TNZed3KD4tQmQ8/jxCBergQxfz550bgE3hyzA+n0QcZpiZoY76KGPRK4ndbf3VkmG/c1xXEIChcy98P8P7HIbRQcAQSsgxD8iMJ370PyyzRoQ25CGciy3WUAwOuDfZRhiLFLsf9rdxlGMDzU59kCLnAfz0hZzK75FWcmnDI+iJD7/Yc0LljdOVjaNLersbrGfA2dr59eiLk3Ms6kFiABh9/Nb2hHUuGQtXuHcavDOKarICLgNNkSBadYkAZ5NVHQj40yScjGYtqsuLpkrprVjueBuTU+UqpTU9moruU9p1mvQsPZFE3p6JBw3tY2X4yTPjnmPVt+i4k6CtIzPKae5xGsjd4el4WEU9MiVm6Qy/hFa0ClrvcOZL6InQitkFlk4sSrMR9+pqWoyfk8H/7Uj8+SEK5m0igHBSaIP4B4tBBLQXrYhgAAAAASUVORK5CYII=
 // @grant        GM_addStyle
