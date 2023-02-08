@@ -167,9 +167,12 @@ async function waterMarker(){
     if (icon){
         icon.style.opacity=0;
     }else{
+        //特殊场景-未成功
         let icon2=await document.querySelector('div#player-ctnr iframe').contentWindow.document.querySelector('.web-player-icon-roomStatus')
         if (icon2){
             icon2.style.opacity=0;
+        }else{
+            echo.log( echo.asAlert( "暂时无法去除" ))
         }
     }
 }
