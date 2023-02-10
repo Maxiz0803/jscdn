@@ -12,10 +12,8 @@ require  jquery.min.js v1.7.2
 require  ribbons.min.js
 require  echo.min.js
 
-biliget..--obs vlc
-require  jquery.min.js  v1.7.2
-require  jquery-ui-1.9.2.custom.min.js
-require  Ajax-hook.min.js
+getbili..--obs vlc
+require  jquery.min.js  v3.6
 require  echo.min.js
 require  BilibiliAPI_Mod.min.js
 require  blive_room_info_api.js?version=1037039
