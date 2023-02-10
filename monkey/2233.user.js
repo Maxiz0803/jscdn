@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         2233 漫画
+// @name         2233 404
 // @namespace    http://tampermonkey.net/
-// @version      1.1
-// @description  2233 漫画
+// @version      1.3
+// @description  2233 404 在天天奖励可见[没啥用]
 // @author       mxk-zwh
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
@@ -14,79 +14,75 @@
 // ==/UserScript==
 //小功能
 //var curIndex = 0;
-function quBeiJing(){
-    document.querySelector('.task-center-container').style.backgroundColor='transparent';
-    document.querySelector('body').style.backgroundColor="rgb(241,243,140)";
-}
-
-//function changeImg(bgimgs) {
-//    if (curIndex == bgimgs.length - 1) {
-//        curIndex = 0;
-//    } else {
-//        curIndex += 1;
-//    }
-//    document.body.style.backgroundImage="URL("+bgimgs[curIndex]+")"
-//}
-(function(r) {
-    'use strict';
-    var o=[];
-    //timeInterval=10e3;
-    //var bgimgs=[,];
-    r.ajax({
-        url:"//api.bilibili.com/x/activity/operation/list?source_id=630edcfddbd0b39ca7371ad2",
-        type:"get",
-        dataType:"json",
-        async: !1,
-        timeout:3e3,
-        success:function(r){
-            var t=r.data&&r.data.list;
-            for (var e in t) o.push(t[e].object_id)
-        }
-    });
-    //随机
-    var s=parseInt(Math.random()*o.length)
-    //取图片
-    var g=o[s];
-    echo.log(g)
-    //1l 2pp
-    var l=r("#main");
-
-    //
-
-    window.rec_rp =
-        window.rec_rp ||
-        function() { (rec_rp.q = rec_rp.q || []).push(arguments)},
-        rec_rp("event", "errorpage_pageshow", {
-        pic: g,
-        url: window.location.href,
-    })
-    //创建
-    l.append("<div class='apage'><div class='error-split' id='up'></div></div>");
-    setTimeout(()=>{
-        quBeiJing()
-        window.cnblogsConfig = {}
-        new Ribbons(window.cnblogsConfig.backgroundAnimation);
-        r('.apage').append("<img class='imgs' src='" + g + "'><div class='lunbo'></div><a class='change-img-btn'>换一张</a>")
-        r(".change-img-btn").click(function(){
-            s++;
-            if (s<=o.length-1){
-                echo.log(s)
-                r('.imgs').attr("src",o[s])
-            }else{
-                s=0;
-                echo.log(s)
+let o=[];
+let s;
+let way={
+    quBeiJing:function (){
+        document.querySelector('.task-center-container').style.backgroundColor='transparent';
+        document.body.style.backgroundColor="rgb(241,243,140)";
+    },
+    x:()=>{
+        $.ajax({
+            url:"//api.bilibili.com/x/activity/operation/list?source_id=630edcfddbd0b39ca7371ad2",
+            type:"get",
+            dataType:"json",
+            async: !1,
+            timeout:3e3,
+            success:function(r){
+                way.addarr(r)
             }
-
         });
+    },
+    addarr:(r)=>{
+        s=parseInt(Math.random()*o.length)
+        var t=r.data&&r.data.list;
+        for (var e in t) o.push(t[e].object_id)
+        way.getimg()
+    },
+    getimg:()=>{
+        var g=o[s];
+        way.recrp(g)
+        setTimeout(()=>{
+            way.quBeiJing()
+            window.cnblogsConfig = {}
+            new Ribbons(window.cnblogsConfig.backgroundAnimation);
+            $('.apage').append(`<img class='imgs' src='${g}'><div class='lunbo'></div><a class='change-img-btn'>换一张</a>`)
+            $(".change-img-btn").click(function(){
+                s++;
+                if (s<=o.length-1){
+                    echo.log(s)
+                    $('.imgs').attr("src",o[s])
+                }else{
+                    s=0;
+                    echo.log(s)
+                }
 
-    },1e3);
-    //样式
-    GM_addStyle('.apage{display: flex;flex-direction: column;align-items: center;}.error-split {width: 700px;height: 40px;background: url(https://static.hdslb.com/images/error/have_rest.png) center no-repeat; margin: 0px 0px 41px 0px;display: flex;}.imgs{display: flex;width: 700px;}')
-    GM_addStyle('.change-img-btn{display: block;height: 48px;width: 150px;margin: 30px auto 0;line-height: 48px;vertical-align: middle;text-align: center;font-size: 16px;background: #00a1d6;color: #fff;border-radius: 4px;transition: 0.2s;}')
-    GM_addStyle('#lunbo{background: #7b837e78;position: relative;padding: 12px 24px;display: flex;z-index: 10;border-radius: 24px;color: white;justify-content: center;bottom: 87px;font-size: 18px;}')
-    //自动换背景
-    //setInterval(changeImg(bgimgs), timeInterval);
-    //下一张
+            });
 
-    // Your code here...
-})(jQuery);
+        },1e3);
+    },
+    recrp:(g)=>{
+        window.rec_rp =
+            window.rec_rp ||
+            function() { (rec_rp.q = rec_rp.q || []).push(arguments)},
+            rec_rp("event", "errorpage_pageshow", {
+            pic: g,
+            url: window.location.href,
+        })
+    },
+    ui:()=>{
+        var l=$("#main");
+        l.append("<div class='apage'><div class='error-split' id='up'></div></div>");
+    },
+    addstyles:()=>{
+        GM_addStyle('.apage{display: flex;flex-direction: column;align-items: center;}.error-split {width: 700px;height: 40px;background: url(https://static.hdslb.com/images/error/have_rest.png) center no-repeat; margin: 0px 0px 41px 0px;display: flex;}.imgs{display: flex;width: 700px;}')
+        GM_addStyle('.change-img-btn{display: block;height: 48px;width: 150px;margin: 30px auto 0;line-height: 48px;vertical-align: middle;text-align: center;font-size: 16px;background: #00a1d6;color: #fff;border-radius: 4px;transition: 0.2s;}')
+        GM_addStyle('#lunbo{background: #7b837e78;position: relative;padding: 12px 24px;display: flex;z-index: 10;border-radius: 24px;color: white;justify-content: center;bottom: 87px;font-size: 18px;}')
+    },
+    start:()=>{
+        way.x()
+        way.addstyles()
+        way.ui()
+    }
+}
+way.start()
