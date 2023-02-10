@@ -138,7 +138,7 @@ let way = {
             e.preventDefault();
         })
     },
-    showinfo:async function (){
+    additems:async function (){
         let ul=top.document.querySelector('#item_add');
         console.log(GM_getValue("流地址"));
         $.each(GM_getValue("流地址"),(i,v)=>{
@@ -353,7 +353,7 @@ let way = {
     start:function (){
         way.addinfo();
         way.ui();
-        way.showinfo();
+        way.additems();
         way.echoinfo();
     }
 }
