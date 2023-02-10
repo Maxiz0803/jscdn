@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      1.5
+// @version      1.7
 // @description  领金仓鼠
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/p/center/index*
