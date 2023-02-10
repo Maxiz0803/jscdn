@@ -2,7 +2,7 @@
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
 // @version      1.5
-// @description  前往领奖励
+// @description  领金仓鼠
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/p/center/index*
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
