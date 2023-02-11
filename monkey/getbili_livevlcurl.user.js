@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取b流地址&去直播水印
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.0
+// @version      2.1
 // @description  获取b流地址，去直播水印，获取短位号
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
