@@ -100,21 +100,23 @@ let way = {
                 break;
         }
     },
-    delwatermark:async function (){
+    delwatermark:function (delay=3e3){
         let icon=top.document.querySelector('.web-player-icon-roomStatus');
         if (icon){
             icon.parentNode.removeChild(icon);
             way.alter('🥰水印去除成功','s');
         }else{
             //特殊场景-未成功
-            let a=await document.querySelector('div#player-ctnr iframe');
-            let icon2=document.querySelector('.web-player-icon-roomStatus');
-            icon2.parentNode.removeChild(icon2);
-            if (!icon2){
-                way.alter('😲水印去除失败','d');}
-            else
-                {way.alter('🥰水印去除成功','s');}
-
+            setTimeout(()=>{
+                let a=document.querySelector('div#player-ctnr iframe');
+                let icon2=document.querySelector('.web-player-icon-roomStatus');
+                if (!icon2){
+                    way.alter('😲水印去除失败','d');
+                }else{
+                    way.alter('🥰水印去除成功','s');
+                    icon2.parentNode.removeChild(icon2);
+                }
+            },delay)
         }
     },
     middle:async function (){
