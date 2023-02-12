@@ -75,7 +75,7 @@ let way={
         l.append("<div class='apage'><div class='error-split' id='up'></div></div>");
     },
     addstyles:()=>{
-        GM_addStyle('.apage{display: flex;flex-direction: column;align-items: center;}.error-split {width: 700px;height: 40px;background: url(https://static.hdslb.com/images/error/have_rest.png) center no-repeat; margin: 0px 0px 41px 0px;display: flex;}.imgs{display: flex;width: 700px;}')
+        GM_addStyle('.apage{display: flex;flex-direction: column;align-items: center;margin-bottom: 110px;}.error-split {width: 700px;height: 40px;background: url(https://static.hdslb.com/images/error/have_rest.png) center no-repeat; margin: 0px 0px 41px 0px;display: flex;}.imgs{display: flex;width: 700px;}')
         GM_addStyle('.change-img-btn{display: block;height: 48px;width: 150px;margin: 30px auto 0;line-height: 48px;vertical-align: middle;text-align: center;font-size: 16px;background: #00a1d6;color: #fff;border-radius: 4px;transition: 0.2s;}')
         GM_addStyle('#lunbo{background: #7b837e78;position: relative;padding: 12px 24px;display: flex;z-index: 10;border-radius: 24px;color: white;justify-content: center;bottom: 87px;font-size: 18px;}')
     },
