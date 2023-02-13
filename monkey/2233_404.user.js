@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         2233 404
 // @namespace    http://tampermonkey.net/
-// @version      1.3
-// @description  2233 404 在天天奖励可见[没啥用]
+// @version      1.4
+// @description  2233 404 在天天奖励可见[没啥用]，自动换背景
 // @author       mxk-zwh
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
@@ -19,7 +19,9 @@ let s;
 let way={
     quBeiJing:function (){
         document.querySelector('.task-center-container').style.backgroundColor='transparent';
-        document.body.style.backgroundColor="rgb(241,243,140)";
+        //自动 换背景
+        document.body.style.background=`url(https://www.loliapi.com/acg/) fixed no-repeat`;
+        document.body.style.backgroundSize=`cover`;
     },
     x:()=>{
         $.ajax({
