@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取b流地址&去直播水印
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.1
+// @version      2.2
 // @description  获取b流地址，去直播水印，获取短位号
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
@@ -31,6 +31,8 @@ let way = {
             way.appendbtn();
             way.testPanel();
             way.build();
+            way.roomplayinfo()
+            way.echoinfo();
         }
     },
     xlive: {
@@ -50,40 +52,29 @@ let way = {
             })
         }
     },
-    roomplayinfo:async function () {
-        var r =await way.xlive.getRoomPlayInfo(roomid);
-        GM_setValue("房间号",roomid);
-        GM_setValue("短位号",r.data.short_id);
-        GM_setValue("UP主号",upid);
-        var json = {
-            livestatus:r.data.live_status,
-            stream:r.data.playurl_info.playurl.stream
-        }
-        return json
-    },
-    getanchor:async function (){
-        var a = await BAPI.live_user.get_anchor_in_room(roomid);
-        var uname=a.data.info.uname;
-        GM_setValue("UP主名",uname);
-    },
     getvlc:function (stream){
         var i,k,arr=[];
         var urlinfo,codec;
-        for(i=0;i<stream.length;i++){
-            if (stream[i].protocol_name.indexOf("http_hls")!=-1){
-                stream=stream[i];
+        if(!stream){
+            GM_setValue("流地址",null);
+        }else{
+            for(i=0;i<stream.length;i++){
+                if (stream[i].protocol_name.indexOf("http_hls")!=-1){
+                    stream=stream[i];
+                }
             }
+            codec=stream.format[0].codec;
+            for (k=0;k<codec.length;k++){
+                var codecName=codec[k].codec_name;
+                var vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
+                var cu={codecName:codecName,vlcurl:vlcurl};
+                arr.push(cu);
+            }
+            GM_setValue("流地址",arr);
         }
-        codec=stream.format[0].codec;
-        for (k=0;k<codec.length;k++){
-            var codecName=codec[k].codec_name;
-            var vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
-            var cu={codecName:codecName,vlcurl:vlcurl};
-            arr.push(cu);
-        }
-        GM_setValue("流地址",arr);
     },
     livecheck:function (livestatus){
+        console.log(livestatus)
         switch(livestatus){
             case 0:
                 GM_setValue("直播状态","🐸主播未开播");
@@ -99,6 +90,23 @@ let way = {
                 GM_setValue("直播状态",'unknown');
                 break;
         }
+    },
+    getanchor:async function (){
+        var a = await BAPI.live_user.get_anchor_in_room(roomid);
+        var uname=a.data.info.uname;
+        GM_setValue("UP主名",uname);
+    },
+    roomplayinfo:async function () {
+        var r =await way.xlive.getRoomPlayInfo(roomid);
+        GM_setValue("房间号",roomid);
+        GM_setValue("短位号",r.data.short_id);
+        GM_setValue("UP主号",upid);
+        let livestatus=r.data.live_status;
+        way.livecheck(livestatus);
+        let stream=r.data.playurl_info&&r.data.playurl_info.playurl.stream
+        way.getvlc(stream);
+        way.getanchor();
+        way.additems();
     },
     delwatermark:function (delay=3e3){
         let icon=top.document.querySelector('.web-player-icon-roomStatus');
@@ -119,19 +127,6 @@ let way = {
             },delay)
         }
     },
-    middle:async function (){
-        let {
-            livestatus,
-            stream
-        } = await way.roomplayinfo();
-
-        way.getvlc(stream);
-        way.livecheck(livestatus);
-    },
-    addinfo:function (){
-        way.middle();
-        way.getanchor();
-    },
     clickCopy:async function (cn,txt){
         var btn=top.document.querySelector(cn);
         btn.addEventListener('click',(e)=>{
@@ -143,18 +138,25 @@ let way = {
     additems:async function (){
         let ul=top.document.querySelector('#item_add');
         console.log(GM_getValue("流地址"));
-        $.each(GM_getValue("流地址"),(i,v)=>{
+        if(!GM_getValue("流地址")){
             let li=document.createElement("li");
-            let test=top.document.querySelector(`#item_add #item_${i}`);
-            li.innerHTML=`<button class="b_vlc_${i}" title="复制推流URL">
-                          <i class='iconfont icon-fuzhi'></i></button>
-                          <span>${v.codecName}</span><p>${v.vlcurl}</p>`;
-            li.id=`item_${i}`;
-            if (!test){
-                ul.appendChild(li);
-                way.clickCopy(`.b_vlc_${i}`,v.vlcurl);
-            }
-        })
+            li.innerHTML=`<p text-align='center'>😓空空如也</p>`;
+            li.id=`nothing`;
+            ul.appendChild(li);
+        }else{
+            $.each(GM_getValue("流地址"),(i,v)=>{
+                let li=document.createElement("li");
+                let test=top.document.querySelector(`#item_add #item_${i}`);
+                li.innerHTML=`<button class="b_vlc_${i}" title="复制推流URL">
+                              <i class='iconfont icon-fuzhi'></i></button>
+                              <span>${v.codecName}</span><p>${v.vlcurl}</p>`;
+                li.id=`item_${i}`;
+                if (!test){
+                    ul.appendChild(li);
+                    way.clickCopy(`.b_vlc_${i}`,v.vlcurl);
+                }
+            })
+        }
     },
     alter:function (data,type,delay=2000){
         let lunbo=document.createElement("div");
@@ -281,7 +283,7 @@ let way = {
             #b_btn_mgll .abc .test-panel ul li:nth-child(odd) {background-color: aliceblue;}
             #b_btn_mgll .abc .test-panel ul li {
             font-size: 18px;height: 42px;
-            display: flex;align-items: center;}
+            display: flex;align-items: center;justify-content: center;}
             #b_btn_mgll .abc .test-panel ul li#sign_ornot {justify-content: space-around;}
             #b_btn_mgll .abc .test-panel ul li p{
             font-size: 14px;
@@ -353,10 +355,7 @@ let way = {
         });
     },
     start:function (){
-        way.addinfo();
         way.ui();
-        way.additems();
-        way.echoinfo();
     }
 }
 
