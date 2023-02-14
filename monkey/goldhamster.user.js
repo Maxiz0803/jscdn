@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      1.7
-// @description  领金仓鼠
+// @version      1.8
+// @description  领金仓鼠,es6
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/p/center/index*
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
@@ -23,7 +23,7 @@ const startliveReg=new RegExp("#/my-room/start-live");
 //用于创建 天天开播领奖励 的按钮
 let way={
     taskcenter:function (data){
-        var mgll=document.createElement("div");
+        let mgll=document.createElement("div");
         mgll.id="task_center_mgll";
         mgll.innerHTML=data;
         mgll.style.left='161px'
@@ -61,19 +61,19 @@ let way={
     },
     //点击按钮 跳转指定链接
     gototaskcenter:function (){
-        var div=document.querySelector("#task_center_mgll")
+        let div=document.querySelector("#task_center_mgll")
         div.onclick=()=>{
             window.open(taskcenter,'_self')
         }
     },
     gotolivecenter:function (){
-        var div=document.querySelector("#live_center_mgll")
+        let div=document.querySelector("#live_center_mgll")
         div.onclick=()=>{
             window.open(startLive,'_self')
         }
     },
     back:function (){
-        var back=document.querySelector("#b_back")
+        let back=document.querySelector("#b_back")
         back.onclick=()=>{
             history.back();
         }
@@ -169,7 +169,7 @@ let way={
         `)
     },
     start:()=>{
-        var urlcheck=startliveReg.test(location.href)
+        let urlcheck=startliveReg.test(location.href)
         if(urlcheck){
             way.addstyle1()
             way.taskcenter("天天开播领奖励")
