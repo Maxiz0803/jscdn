@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         获取b流地址&去直播水印
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.2
-// @description  获取b流地址，去直播水印，获取短位号
+// @version      2.3
+// @description  获取b流地址，去直播水印，获取短位号,es6
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -53,8 +53,8 @@ let way = {
         }
     },
     getvlc:function (stream){
-        var i,k,arr=[];
-        var urlinfo,codec;
+        let i,k,arr=[];
+        let urlinfo,codec;
         if(!stream){
             GM_setValue("流地址",null);
         }else{
@@ -65,9 +65,9 @@ let way = {
             }
             codec=stream.format[0].codec;
             for (k=0;k<codec.length;k++){
-                var codecName=codec[k].codec_name;
-                var vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
-                var cu={codecName:codecName,vlcurl:vlcurl};
+                let codecName=codec[k].codec_name;
+                let vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
+                let cu={codecName:codecName,vlcurl:vlcurl};
                 arr.push(cu);
             }
             GM_setValue("流地址",arr);
@@ -92,12 +92,12 @@ let way = {
         }
     },
     getanchor:async function (){
-        var a = await BAPI.live_user.get_anchor_in_room(roomid);
-        var uname=a.data.info.uname;
+        let a = await BAPI.live_user.get_anchor_in_room(roomid);
+        let uname=a.data.info.uname;
         GM_setValue("UP主名",uname);
     },
     roomplayinfo:async function () {
-        var r =await way.xlive.getRoomPlayInfo(roomid);
+        let r =await way.xlive.getRoomPlayInfo(roomid);
         GM_setValue("房间号",roomid);
         GM_setValue("短位号",r.data.short_id);
         GM_setValue("UP主号",upid);
@@ -128,7 +128,7 @@ let way = {
         }
     },
     clickCopy:async function (cn,txt){
-        var btn=top.document.querySelector(cn);
+        let btn=top.document.querySelector(cn);
         btn.addEventListener('click',(e)=>{
             GM_setClipboard(txt);
             way.alter('😘复制成功😘','s');
