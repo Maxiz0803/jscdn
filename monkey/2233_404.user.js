@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         2233 404
 // @namespace    http://tampermonkey.net/
-// @version      1.4
-// @description  2233 404 在天天奖励可见[没啥用]，自动换背景
+// @version      1.5
+// @description  2233 404 在天天奖励可见[没啥用]，自动换背景,es6
 // @author       mxk-zwh
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
@@ -12,8 +12,6 @@
 // @require      https://cdn.jsdelivr.net/gh/mxk-zwh/jscdn/asset/ribbons.min.js
 // @require      https://cdn.jsdelivr.net/gh/mxk-zwh/jscdn/asset/echo.min.js
 // ==/UserScript==
-//小功能
-//var curIndex = 0;
 let o=[];
 let s;
 let way={
@@ -37,12 +35,12 @@ let way={
     },
     addarr:(r)=>{
         s=parseInt(Math.random()*o.length)
-        var t=r.data&&r.data.list;
-        for (var e in t) o.push(t[e].object_id)
+        let t=r.data&&r.data.list;
+        for (let e in t) o.push(t[e].object_id)
         way.getimg()
     },
     getimg:()=>{
-        var g=o[s];
+        let g=o[s];
         way.recrp(g)
         setTimeout(()=>{
             way.quBeiJing()
@@ -73,7 +71,7 @@ let way={
         })
     },
     ui:()=>{
-        var l=$("#main");
+        let l=$("#main");
         l.append("<div class='apage'><div class='error-split' id='up'></div></div>");
     },
     addstyles:()=>{
