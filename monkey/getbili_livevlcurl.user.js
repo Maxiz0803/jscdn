@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         获取b流地址&去直播水印
+// @name         blive流地址
 // @namespace    https://space.bilibili.com/52758366
 // @version      2.4
-// @description  获取可播放b流地址，去直播水印，获取短位号,es6
+// @description  获取可播放b站流地址(部分直播间支持)，去直播水印，获取短位号(全支持),es6
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -217,8 +217,9 @@ let way = {
         div.style.transform="translate(1px,-46px)";
         let ul=document.createElement("ul");
         ul.id="item_add";
+        //没获取到 显示
         let li=document.createElement("li");
-        li.innerHTML=`<p text-align='center'>😓空空如也</p>`;
+        li.innerHTML=`<p text-align='center'>😓抱歉无法获取该直播</p>`;
         li.id=`nothing`;
         ul.appendChild(li);
         div.appendChild(ul);
