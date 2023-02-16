@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         获取b流地址&去直播水印
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.3
-// @description  获取b流地址，去直播水印，获取短位号,es6
+// @version      2.4
+// @description  获取可播放b流地址，去直播水印，获取短位号,es6
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -36,7 +36,8 @@ let way = {
         }
     },
     xlive: {
-        getRoomPlayInfo: ( roomid, no_playurl = '0', mask = '1', qn = "0", platform = "web", protocol = "1", format = '0,2', codec = '0,1') =>{
+        getRoomPlayInfo: ( roomid, no_playurl = '0', mask = '1', qn = "0",
+                          platform = "web", protocol = "0,1", format = '0,2', codec = '0,1',ptype="8",dobly="5",panorama="1") =>{
             return BAPI.ajax({
                 url: 'xlive/web-room/v2/index/getRoomPlayInfo',
                 data: {
@@ -55,23 +56,21 @@ let way = {
     getvlc:function (stream){
         let i,k,arr=[];
         let urlinfo,codec;
-        if(!stream){
-            GM_setValue("流地址",null);
-        }else{
-            for(i=0;i<stream.length;i++){
-                if (stream[i].protocol_name.indexOf("http_hls")!=-1){
-                    stream=stream[i];
-                }
+
+        for(i=0;i<stream.length;i++){
+            if (stream[i].protocol_name.indexOf("http_hls")!=-1){
+                stream=stream[i];
             }
-            codec=stream.format[0].codec;
-            for (k=0;k<codec.length;k++){
-                let codecName=codec[k].codec_name;
-                let vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
-                let cu={codecName:codecName,vlcurl:vlcurl};
-                arr.push(cu);
-            }
-            GM_setValue("流地址",arr);
         }
+        codec=stream.format[0].codec;
+        for (k=0;k<codec.length;k++){
+            let codecName=codec[k].codec_name;
+            let vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
+            let cu={codecName:codecName,vlcurl:vlcurl};
+            arr.push(cu);
+        }
+        GM_setValue("流地址",arr);
+        way.additems()
     },
     livecheck:function (livestatus){
         console.log(livestatus)
@@ -101,12 +100,14 @@ let way = {
         GM_setValue("房间号",roomid);
         GM_setValue("短位号",r.data.short_id);
         GM_setValue("UP主号",upid);
+        GM_setValue("流地址",null);
+        console.log(r)
         let livestatus=r.data.live_status;
         way.livecheck(livestatus);
-        let stream=r.data.playurl_info&&r.data.playurl_info.playurl.stream
+        let stream=r.data.playurl_info.playurl&&r.data.playurl_info.playurl.stream
+        console.log(stream)
         way.getvlc(stream);
         way.getanchor();
-        way.additems();
     },
     delwatermark:function (delay=3e3){
         let icon=top.document.querySelector('.web-player-icon-roomStatus');
@@ -138,25 +139,19 @@ let way = {
     additems:async function (){
         let ul=top.document.querySelector('#item_add');
         console.log(GM_getValue("流地址"));
-        if(!GM_getValue("流地址")){
+        $('li#nothing').remove()
+        $.each(GM_getValue("流地址"),(i,v)=>{
             let li=document.createElement("li");
-            li.innerHTML=`<p text-align='center'>😓空空如也</p>`;
-            li.id=`nothing`;
-            ul.appendChild(li);
-        }else{
-            $.each(GM_getValue("流地址"),(i,v)=>{
-                let li=document.createElement("li");
-                let test=top.document.querySelector(`#item_add #item_${i}`);
-                li.innerHTML=`<button class="b_vlc_${i}" title="复制推流URL">
+            let test=top.document.querySelector(`#item_add #item_${i}`);
+            li.innerHTML=`<button class="b_vlc_${i}" title="复制推流URL">
                               <i class='iconfont icon-fuzhi'></i></button>
                               <span>${v.codecName}</span><p>${v.vlcurl}</p>`;
-                li.id=`item_${i}`;
-                if (!test){
-                    ul.appendChild(li);
-                    way.clickCopy(`.b_vlc_${i}`,v.vlcurl);
-                }
-            })
-        }
+            li.id=`item_${i}`;
+            if (!test){
+                ul.appendChild(li);
+                way.clickCopy(`.b_vlc_${i}`,v.vlcurl);
+            }
+        })
     },
     alter:function (data,type,delay=2000){
         let lunbo=document.createElement("div");
@@ -214,6 +209,7 @@ let way = {
         divbtn.style.top="186px";
         divbtn.style.cursor="pointer";
         top.document.body.appendChild(divbtn);
+
     },
     testPanel:function (){
         let div=document.createElement("div");
@@ -221,6 +217,10 @@ let way = {
         div.style.transform="translate(1px,-46px)";
         let ul=document.createElement("ul");
         ul.id="item_add";
+        let li=document.createElement("li");
+        li.innerHTML=`<p text-align='center'>😓空空如也</p>`;
+        li.id=`nothing`;
+        ul.appendChild(li);
         div.appendChild(ul);
         $('#b_btn_mgll .abc').append(div);
     },
@@ -355,6 +355,7 @@ let way = {
         });
     },
     start:function (){
+
         way.ui();
     }
 }
