@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      1.8
-// @description  领金仓鼠,es6
+// @version      1.9
+// @description  领金仓鼠,es6，开播设置显示
 // @author       mxk-zwh
+// @match        https://link.bilibili.com/*
 // @match        https://link.bilibili.com/p/center/index*
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
