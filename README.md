@@ -11,6 +11,8 @@
 <br>
 ![image](https://user-images.githubusercontent.com/72368111/219713626-1ca28513-3d0f-43d9-bfd7-1d3c651f3465.png)
 <br>
+![image](https://user-images.githubusercontent.com/72368111/219714319-c1a3a511-6889-46d0-ae17-60a641b5d4d7.png)
+<br>
 3.根据你的脚本是什么样子的，我这边是把脚本整合成了一个压缩包，然后点击压缩包右边的选择文件，然后选择你的脚本。
 <br>
 4.点击导入，然后完成！！！
