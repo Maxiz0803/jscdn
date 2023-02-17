@@ -2,7 +2,7 @@
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
 // @version      1.9
-// @description  领金仓鼠,es6，开播设置显示
+// @description  领金仓鼠,es6，开播设置显示，每天开播任务
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
 // @match        https://link.bilibili.com/p/center/index*
