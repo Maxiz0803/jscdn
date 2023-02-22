@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.0
-// @description  领金仓鼠,es6，开播设置显示，每天开播任务,改背景
+// @version      2.1
+// @description  领金仓鼠,es6，开播设置显示，每天开播任务,背景
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
 // @match        https://link.bilibili.com/p/center/index*
@@ -39,7 +39,7 @@ let way={
     changeBG:()=>{
         let app=document.querySelector('#live-center-app');
         app.style.background=
-            `url('https://www.loliapi.com/acg/') 0% 0% / cover no-repeat fixed`;
+            `linear-gradient(rgb(255 255 255 / 90%), rgb(41 147 245 / 74%)),url('https://www.loliapi.com/acg/') 0% 0% / cover no-repeat fixed`;
         console.log('a')
     },
     //用于创建开播按钮
