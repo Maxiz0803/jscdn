@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         blive流地址
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.4
+// @version      2.5
 // @description  获取可播放b站流地址(部分直播间支持)，去直播水印，获取短位号(全支持),es6
 // @author       mxk-zwh
 // @include      /https:\/\/live\.bilibili\.com\/(blanc\/)?\d+/
@@ -90,8 +90,8 @@ let way = {
                 break;
         }
     },
-    getanchor:async function (){
-        let a = await BAPI.live_user.get_anchor_in_room(roomid);
+    getanchor: function (){
+        let a =  BAPI.live_user.get_anchor_in_room(roomid);
         let uname=a.data.info.uname;
         GM_setValue("UP主名",uname);
     },
@@ -104,10 +104,10 @@ let way = {
         console.log(r)
         let livestatus=r.data.live_status;
         way.livecheck(livestatus);
+        way.getanchor();
         let stream=r.data.playurl_info.playurl&&r.data.playurl_info.playurl.stream
         console.log(stream)
         way.getvlc(stream);
-        way.getanchor();
     },
     delwatermark:function (delay=3e3){
         let icon=top.document.querySelector('.web-player-icon-roomStatus');
