@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.1
-// @description  领金仓鼠,es6，开播设置显示，每天开播任务,背景
+// @version      2.4
+// @description  开播设置出现领金仓鼠，背景更换，查看每天开播任务,任务文字变白,前往自己的直播间以及自己主页
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
 // @match        https://link.bilibili.com/p/center/index*
@@ -21,6 +21,10 @@ const img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAA
 const taskcenter="https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html?is_live_full_webview=1&no-jump=1&source_event=1#/";
 const startLive="https://link.bilibili.com/p/center/index#/my-room/start-live";
 const startliveReg=new RegExp("#/my-room/start-live");
+const myroomid=top.window.localStorage.PAGE_REFRESH_CD_CACHE.split('"')[1].split('_')[0];
+const myuid=top.window.localStorage.PAGE_REFRESH_CD_CACHE.split('"')[1].split('_')[1];
+const myRoom="http://live.bilibili.com/"+myroomid;
+const mySpace="http://space.bilibili.com/"+myuid;
 //用于创建 天天开播领奖励 的按钮
 let way={
     taskcenter:function (data){
@@ -35,6 +39,22 @@ let way={
 
         way.gototaskcenter()
         $('#task_center_mgll').draggable();
+    },
+    whitetext: ()=>{
+        setTimeout(()=>{
+            console.log("gray")
+            let i,j;
+            let a = document.querySelectorAll(".awards-text .awards-title>span");
+            for(i=0;i<a.length;i++){
+                a[i].style.color="white";
+                console.log(i)
+            }
+            let b = document.querySelectorAll("span.awards-label");
+            for(j=0;j<b.length;j++){
+                b[j].style.color="white";
+            }
+            console.log("white")
+        },1e3)
     },
     changeBG:()=>{
         let app=document.querySelector('#live-center-app');
@@ -54,19 +74,32 @@ let way={
         }
         way.gotolivecenter()
     },
-    //创建返回的按钮
-    backBtn:function (data){
+    //创建前往本人直播间的按钮
+    myRoomBtn:function (data){
+        console.log(111)
         let mgll=document.createElement("div");
-        let test=document.getElementById("b_back");
-        mgll.id="b_back";
+        let test=document.getElementById("b_myroom");
+        mgll.id="b_myroom";
         mgll.className="awards-records slide-in"
         mgll.innerHTML=data;
         if(!test){
             document.body.appendChild(mgll);
-
+            console.log(myRoom)
         }
-        way.back()
+        way.gomyRoom()
 
+    },
+    mySpaceBtn:(data)=>{
+       let mgll=document.createElement("div");
+        let test=document.getElementById("b_myspace");
+        mgll.id="b_myspace";
+        mgll.className="awards-records slide-in"
+        mgll.innerHTML=data;
+        if(!test){
+            document.body.appendChild(mgll);
+            console.log(mySpace)
+        }
+        way.gomySpace()
     },
     //点击按钮 跳转指定链接
     gototaskcenter:function (){
@@ -81,10 +114,16 @@ let way={
             window.open(startLive,'_self')
         }
     },
-    back:function (){
-        let back=document.querySelector("#b_back")
-        back.onclick=()=>{
-            history.back();
+    gomyRoom:function (){
+        let mr=document.querySelector("#b_myroom")
+        mr.onclick=()=>{
+            window.open(myRoom,'_blank')
+        }
+    },
+    gomySpace:function (){
+        let ms=document.querySelector("#b_myspace")
+        ms.onclick=()=>{
+            window.open(mySpace,'_blank')
         }
     },
     addstyle1:()=>{
@@ -127,10 +166,13 @@ let way={
     addstyle2:()=>{
         GM_addStyle(`
             #live_center_mgll{
-                bottom: 4.4rem;
+                bottom: 4.0rem;
             }
-            #b_back{
-                bottom: 6.4rem;
+            #b_myroom{
+                bottom: 5.6rem;
+            }
+            #b_myspace{
+                bottom: 7.2rem;
             }
             .awards-records{
                 box-sizing: border-box;
@@ -184,9 +226,11 @@ let way={
             way.taskcenter("天天开播领奖励")
             way.changeBG()
         }else{
-            way.addstyle2()
+            way.addstyle2();
             way.startlive("开播<br>设置")
-            way.backBtn("<<<br>返回")
+            way.myRoomBtn("我的<br>直播间")
+            way.mySpaceBtn("我的<br>主页")
+            way.whitetext();
         }
     }
 }
