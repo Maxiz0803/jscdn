@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.4
+// @version      2.5
 // @description  开播设置出现领金仓鼠，背景更换，查看每天开播任务,任务文字变白,前往自己的直播间以及自己主页
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
@@ -21,8 +21,9 @@ const img='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAA
 const taskcenter="https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html?is_live_full_webview=1&no-jump=1&source_event=1#/";
 const startLive="https://link.bilibili.com/p/center/index#/my-room/start-live";
 const startliveReg=new RegExp("#/my-room/start-live");
-const myroomid=top.window.localStorage.PAGE_REFRESH_CD_CACHE.split('"')[1].split('_')[0];
-const myuid=top.window.localStorage.PAGE_REFRESH_CD_CACHE.split('"')[1].split('_')[1];
+const cd=top.window.localStorage.PAGE_REFRESH_CD_CACHE
+const myroomid=cd&&cd.split('"')[1].split('_')[0];
+const myuid=cd&&cd.split('"')[1].split('_')[1];
 const myRoom="http://live.bilibili.com/"+myroomid;
 const mySpace="http://space.bilibili.com/"+myuid;
 //用于创建 天天开播领奖励 的按钮
