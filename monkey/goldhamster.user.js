@@ -175,6 +175,10 @@ let way={
             #b_myspace{
                 bottom: 7.2rem;
             }
+	    .has-finish::before {
+                content: '🙄';
+                font-size: 30px;
+            }
             .awards-records{
                 box-sizing: border-box;
                 width: 1.38667rem;
