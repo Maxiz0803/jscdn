@@ -237,14 +237,13 @@ let way={
         var qa=ai.data.account_info.quick_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
         // var qal=ai.data.account_info.quick_account_lock
         var ta=ai.data.account_info.total_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
-        var text=`
-           金仓鼠总账户
+        var text=
+        `  金仓鼠总账户
            ${ta}
            金仓鼠普通账户
            ${ma}
            金仓鼠快捷账户
            ${qa}
-
         `
         console.log(text)
     },
