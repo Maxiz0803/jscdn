@@ -3,9 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
-// @author       You
+// @author       mxk-zwh
 // @match        https://weibo.com/*/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=weibo.com
+// @icon         https://avatars.githubusercontent.com/u/72368111?s=40&v=4
 // @require      https://static.hdslb.com/js/jquery.min.js
 // @run-at       document-end
 // @grant        none
@@ -99,7 +99,7 @@ var a={
                            right:($(window).width()-e.pageX+15) +'px',
                        });
                     }
-                    
+
 
                 },
                 mouseleave: function(e){
@@ -113,8 +113,3 @@ var a={
     }
 }
 setTimeout(function(){a.ui();a.test();},3000)
-
-// Your code here...
-// https://wx4.sinaimg.cn/large/6544f080gy1gncw98ndsmj23480u0kjx.jpg
-// https://wx4.sinaimg.cn/mw690/6544f080gy1gncw98ndsmj23480u0kjx.jpg
-// https://wx4.sinaimg.cn/mw2000/6544f080gy1gncw98ndsmj23480u0kjx.jpg
