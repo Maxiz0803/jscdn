@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
-// @version      2.6
+// @version      2.7
 // @description  开播设置出现领金仓鼠，背景更换，查看每天开播任务,任务文字变白,前往自己的直播间以及自己主页
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
@@ -80,7 +80,6 @@ let way={
     },
     //创建前往本人直播间的按钮
     myRoomBtn:function (data){
-        console.log(111)
         let mgll=document.createElement("div");
         let test=document.getElementById("b_myroom");
         mgll.id="b_myroom";
@@ -91,6 +90,19 @@ let way={
             console.log(myRoom)
         }
         way.gomyRoom()
+
+    },
+    myMoneyBtn:function (data,text){
+        let mgll=document.createElement("div");
+        let test=document.getElementById("b_mymoney");
+        mgll.id="b_mymoney";
+        mgll.className="awards-records slide-in"
+        mgll.innerHTML=data;
+        if(!test){
+            document.body.appendChild(mgll);
+            console.log(text)
+        }
+        way.showMoney()
 
     },
     mySpaceBtn:(data)=>{
@@ -130,6 +142,39 @@ let way={
             window.open(mySpace,'_blank')
         }
     },
+    showMoney:function (){
+        var o= way.getAccountBalance();
+        console.log(o);
+        o.then((result)=>{
+            var total=result.总;
+            var common=result.普通;
+            var quick=result.快捷;
+            var html=`
+            <div class="income-info">
+              <div class="item">
+                <div class="income-detail-wrap">
+                  <p class="info-title">金仓鼠总账户</p>
+                   <p class="value">${total}</p>
+                    <p class="info-title">金仓鼠普通用户</p>
+                    <p class="value">${common}</p>
+                  <p class="info-title">金仓鼠快捷账户</p>
+                <p class="value">${quick}</p>
+                </div>
+                </div>
+                </div>`
+             $('body').append(html)
+            var flag=false;
+            $('#b_mymoney').click(function(){
+                if(flag){
+                    $('.income-info').css({display:''})
+                }else{
+                    $('.income-info').css({display:'block'})
+                }
+                flag=!flag
+
+            })
+        })
+    },
     addstyle1:()=>{
         GM_addStyle(`
             #task_center_mgll{
@@ -147,88 +192,138 @@ let way={
                 color:white;
                 transition: background-color 0.3s ease-out, color 0.3s ease-out;
             }
-            #task_center_mgll:before {
-                width:25px;
-                height: 25px;
-                content:"";
-                opacity:0.5;
-                background-image:url('${img}');
-                background-repeat:no-repeat;
-                background-size:contain;
-                display: inline-block;
-            }
-            #task_center_mgll:hover:before {
-                opacity:1;
-            }
-            #task_center_mgll:hover {
-                background-color:#fc8bab;
-                box-shadow: 0 0 30px rgb(0 0 0 / 10%);
-                cursor: pointer;
-            }
-        `)
+#task_center_mgll:before {
+    width:25px;
+    height: 25px;
+    content:"";
+    opacity:0.5;
+    background-image:url('${img}');
+    background-repeat:no-repeat;
+    background-size:contain;
+    display: inline-block;
+}
+#task_center_mgll:hover:before {
+    opacity:1;
+}
+#task_center_mgll:hover {
+    background-color:#fc8bab;
+    box-shadow: 0 0 30px rgb(0 0 0 / 10%);
+    cursor: pointer;
+}
+`)
     },
     addstyle2:()=>{
         GM_addStyle(`
             #live_center_mgll{
                 bottom: 4.0rem;
             }
-            #b_myroom{
-                bottom: 5.6rem;
-            }
-            #b_myspace{
-                bottom: 7.2rem;
-            }
-            .has-finish::before {
-                content: '🙄';
-                font-size: 30px;
-            }
-            .awards-records{
-                box-sizing: border-box;
-                width: 1.38667rem;
-                height: 1.38667rem;
-                font-size: 0.32rem;
-                line-height: 1.5;
-                position: fixed;
-                right: 0.213333rem;
-                color: rgb(255, 255, 255);
-                background-color: rgb(70, 75, 98);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-            }
-            .silde{
-	            animation: jello-horizontal 0.9s both;
-            }
-            @keyframes jello-horizontal {
-                0% {
-                    transform: scale3d(1, 1, 1);
-                }
-                30% {
-                    transform: scale3d(1.25, 0.75, 1);
-                }
-                40% {
-                    transform: scale3d(0.75, 1.25, 1);
-                }
-                50% {
-                    transform: scale3d(1.15, 0.85, 1);
-                }
-                65% {
-                    transform: scale3d(0.95, 1.05, 1);
-                }
-                75% {
-                    transform: scale3d(1.05, 0.95, 1);
-                }
-                100% {
-                    transform: scale3d(1, 1, 1);
-                }
-            }
-
-        `)
+#b_myroom{
+    bottom: 5.6rem;
+}
+#b_myspace{
+    bottom: 7.2rem;
+}
+#b_mymoney{
+    bottom: 8.8rem;
+}
+.has-finish::before {
+    content: '🙄';
+    font-size: 30px;
+}
+.awards-records{
+    box-sizing: border-box;
+    width: 1.38667rem;
+    height: 1.38667rem;
+    font-size: 0.32rem;
+    line-height: 1.5;
+    position: fixed;
+    right: 0.213333rem;
+    color: rgb(255, 255, 255);
+    background-color: rgb(70, 75, 98);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.silde{
+    animation: jello-horizontal 0.9s both;
+}
+@keyframes jello-horizontal {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    30% {
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+        transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    75% {
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+p {
+    margin: 0;
+    padding: 0;
+}
+.income-info {
+display:none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    width: 340px;
+    position: fixed;
+    box-shadow:
+  26px 0px 80px rgba(0, 0, 0, 0.21)
+;
+    bottom: 4rem;
+    right: 1.7rem;
+}
+.income-info .item {
+    position: relative;
+    width: 100%;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #e9eaec;
+}
+.income-info .item .income-detail-wrap {
+    display: inline-block;
+    width: 267px;
+    vertical-align: top;
+}
+.income-info .item .info-title {
+    font-size: 20px;
+    line-height: 26px;
+    color: #333;
+    font-weight: normal;
+    vertical-align: bottom;
+    position: relative;
+}
+.income-info .item .value {
+    font-size: 24px;
+    line-height: 37px;
+    vertical-align: bottom;
+    color: #23aee5;
+    margin-bottom: 20px;
+    margin-top: 2px;
+}
+`)
     },
     getAccountBalance:async()=>{
-        BAPI.setCommonArgs('6a945c778cf93ec025300fa8be4dfcb8','');
+        var csrftoken= decodeURIComponent(document.cookie.replace(new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent('bili_jct').replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'), '$1')) || null;
+        BAPI.setCommonArgs(csrftoken,'');
         var ai=await BAPI.ajaxWithCommonArgs({
             method: 'POST',
             url: 'xlive/revenue/v1/anchorAccount/getAccountBalance'
@@ -237,15 +332,8 @@ let way={
         var qa=ai.data.account_info.quick_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
         // var qal=ai.data.account_info.quick_account_lock
         var ta=ai.data.account_info.total_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
-        var text=
-        `  金仓鼠总账户
-           ${ta}
-           金仓鼠普通账户
-           ${ma}
-           金仓鼠快捷账户
-           ${qa}
-        `
-        console.log(text)
+
+        return {'总':ta,'普通':ma,'快捷':qa}
     },
     start:()=>{
         let urlcheck=startliveReg.test(location.href)
@@ -261,10 +349,10 @@ let way={
             way.startlive("开播<br>设置")
             way.myRoomBtn("我的<br>直播间")
             way.mySpaceBtn("我的<br>主页")
+            way.myMoneyBtn('个人<br>收益')
             way.whitetext();
 
         }
-        way.getAccountBalance()
     }
 }
 
