@@ -2,7 +2,7 @@
 // @name         天天开播领奖励
 // @namespace    https://space.bilibili.com/52758366
 // @version      2.7
-// @description  开播设置出现领金仓鼠，背景更换，查看每天开播任务,任务文字变白,前往自己的直播间以及自己主页
+// @description  开播设置出现领金仓鼠，背景更换，查看每天开播任务,任务文字变白,前往自己的直播间以及自己主页，展示个人收益
 // @author       mxk-zwh
 // @match        https://link.bilibili.com/*
 // @match        https://link.bilibili.com/p/center/index*
