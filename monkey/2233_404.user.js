@@ -16,10 +16,10 @@ let o=[];
 let s;
 let way={
     quBeiJing:function (){
-        document.querySelector('.task-center-container').style.backgroundColor='transparent';
-        //自动 换背景
-        document.body.style.background=`url(https://www.loliapi.com/acg/) fixed no-repeat`;
+        //自动 换背景url没有
+        document.body.style.background=`url() fixed no-repeat`;
         document.body.style.backgroundSize=`cover`;
+        document.querySelector('.task-center-container').style.backgroundColor='transparent';
     },
     x:()=>{
         $.ajax({
@@ -46,7 +46,8 @@ let way={
             way.quBeiJing()
             window.cnblogsConfig = {}
             new Ribbons(window.cnblogsConfig.backgroundAnimation);
-            $('.apage').append(`<img class='imgs' src='${g}'><div class='lunbo'></div><a class='change-img-btn'>换一张</a>`)
+            $('.apage').append(`<img class='imgs' src='${g}'><a class='change-img-btn'>换一张</a><div id='lunbo'></div>`)
+            $('#lunbo').css('display','none')
             $(".change-img-btn").click(function(){
                 s++;
                 if (s<=o.length-1){
@@ -56,7 +57,11 @@ let way={
                     s=0;
                     echo.log(s)
                 }
-
+                $('#lunbo').text(`第${s+1}页`)
+                $('#lunbo').css('display','')
+                setTimeout(()=>{
+                   $('#lunbo').css('display','none')
+                },2e3)
             });
 
         },1e3);
@@ -77,7 +82,7 @@ let way={
     addstyles:()=>{
         GM_addStyle('.apage{display: flex;flex-direction: column;align-items: center;margin-bottom: 110px;}.error-split {width: 700px;height: 40px;background: url(https://static.hdslb.com/images/error/have_rest.png) center no-repeat; margin: 0px 0px 41px 0px;display: flex;}.imgs{display: flex;width: 700px;}')
         GM_addStyle('.change-img-btn{display: block;height: 48px;width: 150px;margin: 30px auto 0;line-height: 48px;vertical-align: middle;text-align: center;font-size: 16px;background: #00a1d6;color: #fff;border-radius: 4px;transition: 0.2s;}')
-        GM_addStyle('#lunbo{background: #7b837e78;position: relative;padding: 12px 24px;display: flex;z-index: 10;border-radius: 24px;color: white;justify-content: center;bottom: 87px;font-size: 18px;}')
+        GM_addStyle('#lunbo{background: #7b837e78;position: relative;padding: 12px 24px;display: flex;z-index: 10;border-radius: 24px;color: white;justify-content: center;bottom: -12px;font-size: 18px;}')
     },
     start:()=>{
         way.x()
