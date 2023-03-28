@@ -2,7 +2,7 @@
 // @name         2233 404
 // @namespace    http://tampermonkey.net/
 // @version      1.5
-// @description  2233 404 在天天奖励可见[没啥用]，自动换背景,es6
+// @description  2233 404 在天天奖励可见[没啥用]，自动换背景
 // @author       mxk-zwh
 // @match        https://live.bilibili.com/p/html/live-anchor-galaxy/task_center/*
 // @match        https://live.bilibili.com/activity/live-activity-full/task_center/mobile.html*
