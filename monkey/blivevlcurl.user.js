@@ -37,7 +37,7 @@ let way = {
     },
     xlive: {
         getRoomPlayInfo: ( roomid, no_playurl = '0', mask = '1', qn = "0",
-                          platform = "web", protocol = "0,1", format = '0,2', codec = '0,1',ptype="8",dobly="5",panorama="1") =>{
+                          platform = "web", protocol = "0,1", format = '0,1,2', codec = '0,1',ptype="8",dobly="5",panorama="1") =>{
             return BAPI.ajax({
                 url: 'xlive/web-room/v2/index/getRoomPlayInfo',
                 data: {
@@ -53,22 +53,40 @@ let way = {
             })
         }
     },
-    getvlc:function (stream){
-        let i,k,arr=[];
-        let urlinfo,codec;
-
-        for(i=0;i<stream.length;i++){
-            if (stream[i].protocol_name.indexOf("http_hls")!=-1){
-                stream=stream[i];
+    getvlc:function (r){
+        let i,j,k,l,arr=[];
+        let urlinfo,fn,codec;
+        console.log(r)
+        let hostlist=['https://d1--cn-gotcha204.bilivideo.com']
+        let stream1=r.data.playurl_info.playurl.stream
+        for(i=0;i<stream1.length;i++){
+            var proname=stream1[i].protocol_name
+            if (proname.indexOf("http_hls")!=-1){
+                var format=stream1[i].format;
+                for(j=0;j<format.length;j++){
+                    fn=format[j].format_name
+                    codec=format[j].codec;
+                    for (k=0;k<codec.length;k++){
+                        let vlcurl,cu;
+                        let codecName=codec[k].codec_name;
+                        let baseurl=codec[k].base_url
+                        let urlinfo=codec[k].url_info
+                        for(l=0;l<urlinfo.length;l++){
+                            let host=urlinfo[l].host
+                            vlcurl=host+baseurl.split("?")[0];
+                            cu={codecName:codecName,vlcurl:vlcurl};
+                            arr.push(cu);
+                        }
+                        for(var x=0;x<hostlist.length;x++){
+                            vlcurl=(hostlist[x]+baseurl.split("?")[0])
+                            cu={codecName:codecName,vlcurl:vlcurl};
+                            arr.push(cu);
+                        }
+                    }
+                }
             }
         }
-        codec=stream.format[0].codec;
-        for (k=0;k<codec.length;k++){
-            let codecName=codec[k].codec_name;
-            let vlcurl='https://d1--cn-gotcha204.bilivideo.com'+codec[k].base_url.split("?")[0];
-            let cu={codecName:codecName,vlcurl:vlcurl};
-            arr.push(cu);
-        }
+
         GM_setValue("流地址",arr);
         way.additems()
     },
@@ -90,8 +108,8 @@ let way = {
                 break;
         }
     },
-    getanchor: function (){
-        let a =  BAPI.live_user.get_anchor_in_room(roomid);
+    getanchor:async function (){
+        let a =await  BAPI.live_user.get_anchor_in_room(roomid);
         let uname=a.data.info.uname;
         GM_setValue("UP主名",uname);
     },
@@ -101,13 +119,11 @@ let way = {
         GM_setValue("短位号",r.data.short_id);
         GM_setValue("UP主号",upid);
         GM_setValue("流地址",null);
-        console.log(r)
         let livestatus=r.data.live_status;
         way.livecheck(livestatus);
         way.getanchor();
-        let stream=r.data.playurl_info.playurl&&r.data.playurl_info.playurl.stream
-        console.log(stream)
-        way.getvlc(stream);
+
+        way.getvlc(r);
     },
     delwatermark:function (delay=3e3){
         let icon=top.document.querySelector('.web-player-icon-roomStatus');
@@ -261,20 +277,18 @@ let way = {
 
             #b_btn_mgll .abc:hover .test-panel{
             color:#000;
-            opacity:1;}
+            display:inline-block;}
 
             #b_btn_mgll .abc .test-panel{
             position: absolute;
-            display:inline-block;
-            width: 415px;
+            display:none;
             background-color: rgb(255, 255, 255);
             border-radius: 8px;
             border: 1px solid rgb(227, 229, 231);
-            transition:height 0.3s ease-out,
-            opacity 0.1s ease-out;
+            transition:height 0.3s ease-out;
             overflow:hidden;
             box-shadow: 0 0 30px rgb(0 0 0 / 10%);
-            opacity:0;}
+            }
 
             #b_btn_mgll .abc .test-panel.left{left:45px;transform-origin: left top;}
             #b_btn_mgll .abc .test-panel.right{right:45px;transform-origin: right top;}
@@ -284,7 +298,7 @@ let way = {
             #b_btn_mgll .abc .test-panel ul li:nth-child(odd) {background-color: aliceblue;}
             #b_btn_mgll .abc .test-panel ul li {
             font-size: 18px;height: 42px;
-            display: flex;align-items: center;justify-content: center;}
+            display: flex;align-items: center;justify-content: flex-start;}
             #b_btn_mgll .abc .test-panel ul li#sign_ornot {justify-content: space-around;}
             #b_btn_mgll .abc .test-panel ul li p{
             font-size: 14px;
