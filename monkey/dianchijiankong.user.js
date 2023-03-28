@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         电池监控🪫
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  低电量通知
 // @author       mxk-zwh
 // @match        https://*/*
@@ -17,15 +17,16 @@ var robotid=""
 var hmp=""
 var low=30
 var i=1;
-
 var way={
     battery:()=>{
         navigator.getBattery().then(function(battery) {
-            var time="还可以使用："+parseInt(battery.dischargingTime/3600)+'h '+parseInt(battery.dischargingTime%3600/60)+'m '+(battery.dischargingTime%3600%60)+'s'
-
+            var time=(
+                battery.dischargingTime!='Infinity'?
+                "&#10;还可以使用："+parseInt(battery.dischargingTime/3600)+'h '+parseInt(battery.dischargingTime%3600/60)+'m '+(battery.dischargingTime%3600%60)+'s'
+                :"可用(电源已接通)"
+            )
             battery.addEventListener("levelchange", function() {
-                way.alter("剩余电量: " + Math.round(battery.level * 100) + "%",'w');
-                console.log((battery.dischargingTime!='Infinity' ? time:"电源已接通"))
+                way.alter(Math.round(battery.level * 100),time);
                 console.log(location.href)
                 if((battery.level * 100)==(low+1)){
                     GM_xmlhttpRequest({
@@ -36,7 +37,7 @@ var way={
                             "Authorization":`${hmp}`,
                             'Content-Type': 'application/json'
                         },
-                        onload:     function (response) {
+                        onload:     function (res) {
                             if (res.code === 200) {
                                 console.log('发送成功')
                             }
@@ -45,24 +46,34 @@ var way={
                             alert(`发送失败`);
                         }
                     });
-
                 }
             });
-
         });
     },
-    alter:function (data,type,delay=4000){
+    alter:function (data,time,delay=4000){
         let lunbo=document.createElement("div");
         let test=top.document.querySelector(".lunbo");
+        var type;
+        var icon;
+        if(data>80){
+            type='s'
+            icon="🔋"
+        }else if(data>60){
+            type='p'
+            icon="🔋"
+        }else if(data>40){
+            type='w'
+            icon="🔋"
+        }else{
+            type='d'
+            icon="🪫"
+        }
         switch(type){
             case 'p':
                 lunbo.className='lunbo primary';
                 break;
             case 's':
                 lunbo.className='lunbo success';
-                break;
-            case 'i':
-                lunbo.className='lunbo info';
                 break;
             case 'w':
                 lunbo.className='lunbo warning';
@@ -74,7 +85,10 @@ var way={
                 lunbo.className='lunbo';
                 break;
         }
-        lunbo.innerHTML=data;
+        lunbo.innerHTML=`
+        ${icon} ${data}%
+        ${time}
+        `;
         if(!test){
             top.document.body.appendChild(lunbo);
             return new Promise(resolve=>{
@@ -94,7 +108,7 @@ var way={
                 right: 10%;
                 bottom: 10%;
                 border-color:#dcdfe6;
-                border-radius: 20px;
+                border-radius: 15px;
                 color: white;
                 font-size: 18px;
                 text-align: center;
@@ -103,7 +117,6 @@ var way={
             .lunbo.primary{background: #409eff;border-color:#409eff;}
             .lunbo.success{background: #67c23a;border-color:#67c23a;}
             .lunbo.danger{background: #f56c6c;border-color:#f56c6c;}
-            .lunbo.info{background: #909399;border-color:#909399;}
             .lunbo.warning{background: #e6a23c;border-color:#e6a23c}
             @keyframes jello-horizontal {
                 0% {
@@ -141,6 +154,5 @@ var way={
 if(i==1){
     way.css();
     way.battery()
-
     i++;
 }
