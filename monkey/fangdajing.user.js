@@ -74,7 +74,6 @@ var a={
     ui:()=>{
         var html=`
             <div id="weibo_block" class="">
-                <span>🔍放大惊</span>
                 <div class="imgbox">
                     <div style="padding-bottom:158%"></div>
                     <img src="" referrerpolicy=”no-referrer”>
@@ -86,6 +85,7 @@ var a={
                 <div class="avaterbox">
                     <img src="" referrerpolicy=”no-referrer”>
                 </div>
+                <span>🔍放大惊</span>
             </div>
             <div id="refresh-fdj">
                 <div class="myButton">1️⃣</div>
@@ -103,25 +103,22 @@ var a={
                display:none;
                border-radius:8px;
                box-shadow:
-                  0px 0.8px 2.2px rgba(0, 0, 0, 0.011),
-                  0px 2.4px 5.3px rgba(0, 0, 0, 0.016),
-                  0px 5.1px 10px rgba(0, 0, 0, 0.02),
-                  0px 9.9px 17.9px rgba(0, 0, 0, 0.024),
-                  0px 19.7px 33.4px rgba(0, 0, 0, 0.029),
-                  0px 48px 80px rgba(0, 0, 0, 0.04)
+                  0px 0px 10px rgba(0, 0, 0, 0.03)
                 ;
                z-index:9999;
             }
             #weibo_block::after{
-               content: "";
-               position: absolute;
-               top: 0;
-               left: 0;
-               right: 0;
-               bottom: 0;
-               z-index: -1;
-               background:#eae044;
-               filter: blur(10px);
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: -1;
+                background: #ffffff;
+                filter: blur(0px);
+                border: 3px solid red;
+                border-radius:8px;
             }
             #weibo_block .imgbox{
                 width:400px;
@@ -225,7 +222,9 @@ var a={
         $('body').find('img').each(function() {
             var src = $(this).attr('src');
             var cn = $(this).attr('class');
+            //需要放大的图片
             if (cn&&(cn.startsWith('picture')||cn.startsWith('woo-picture')) && src.endsWith('.jpg')) {
+                //默认短图
                 var pic_real_width,pic_real_height;
                 var newsrc=src
                 var realsize=getImageSize(newsrc)
@@ -236,23 +235,29 @@ var a={
                 $(this).off("mouseenter")
                 $(this).off("mousemove")
                 $(this).off("mouseleave")
+
                 $(this).on({
                     mouseenter: function(e){
                         $('#weibo_block .avaterbox').css({'display':'none'})
                         //
+                        //正式大小 比例 需要的比例
                         var needbili
                         needbili=(3/4)
+                        //比例为长图 否则宽
                         if(realbili<needbili){
                             newsrc=src.replace('orj360','mw690')
+                            //显示 消失
                             $('#weibo_block .imgbox').css({'display':'inline-block'})
                             $('#weibo_block .wimgbox').css({'display':'none'})
                             $('#weibo_block .imgbox img').attr('src',newsrc)
                         }else{
+                            //显示 消失
                             $('#weibo_block .imgbox').css({'display':'none'})
                             $('#weibo_block .wimgbox').css({'display':'inline-block'})
                             $('#weibo_block .wimgbox img').attr('src',newsrc)
                         }
                         if((e.pageX<$(window).width()/2)){
+                            //鼠标在左半边
                             $('#weibo_block').css({
                                 display:'block',
                                 left:'unset',
@@ -260,6 +265,7 @@ var a={
                                 top:0+'px'
                             });
                         }else{
+                            //鼠标在右半边
                             $('#weibo_block').css({
                                 display:'block',
                                 left:0+'px',
@@ -270,20 +276,34 @@ var a={
 
                     },
                     mousemove:function(e){
+                        // var x = e.clientX;
+                        // var y = e.clientY;
+                        //图片起始坐标
                         var targetPosi=getContentClientRect(this.parentNode);
                         var bodyPosi=getContentClientRect(document.documentElement);
                         var windowSize=getWindowSize();
                         var scrolled=getScrolled();
                         targetPosi.top -= bodyPosi.top-0.4;
                         targetPosi.left -= bodyPosi.left-scrolled.x;
+                        // console.log(targetPosi.top)
+                        // console.log(targetPosi.left)
+                        //差值
                         var 差值=e.pageY-targetPosi.top
+                        // console.log('差值'+差值)
                         var 总值=$(this).parent('div').height()-4;
                         if(差值<0){差值=0}
                         if(差值>总值)
                         {
                             差值=总值
                         }
+                        //长图判断
+                        // console.log(`${差值/总值*100}%`)
+                        //设置
                         $('#weibo_block .imgbox img').css('object-position',`center ${差值/总值*100}%`)
+
+
+                        // console.log('y坐标是' + y)
+
                     },
                     mouseleave: function(e){
                         $('#weibo_block').css({display:'none'});
@@ -294,46 +314,55 @@ var a={
             }
 
             if(cn&&cn.startsWith('woo-avatar-img')){
-                var match=src.match(/crop\.(.*)\//);
-                console.log(match)
-                var crop=match[1]
-                if(crop==null)return;
-                var list=match[1].split('.')
-                list[4]='400'
-                var replace=list.join('.')
-                var newsrc1=src.replace(crop,replace)
-                $(this).parent('div').off("mouseenter")
-                $(this).parent('div').off("mouseleave")
-                $(this).parent('div').on('mouseenter', function(e){
-                    $('#weibo_block .wimgbox').css({'display':'none'})
-                    $('#weibo_block .imgbox').css({'display':'none'})
-                    $('#weibo_block .avaterbox').css({'display':'inline-block'})
-                    $('#weibo_block .avaterbox img').attr('src',newsrc1)
-                    if((e.pageX<$(window).width()/2)){
-                        //鼠标在左半边
-                        $('#weibo_block').css({
-                            display:'block',
-                            left:'unset',
-                            right:0+'px',
-                            top:0+'px'
-                        });
-                    }else{
-                        //鼠标在右半边
-                        $('#weibo_block').css({
-                            display:'block',
-                            left:0+'px',
-                            right:'unset',
-                            top:0+'px'
-                        });
-                    }
-                })
-                $(this).parent('div').on('mouseleave',function(e){
-                    $('#weibo_block').css({display:'none'});
-                })
+                try{
+                    var match=src.match(/crop\.(.*)\//);
+                    var crop=match[1]
+                    if(crop==null)return;
+                    var list=match[1].split('.')
+                    list[4]='400'
+                    var replace=list.join('.')
+                    var newsrc1=src.replace(crop,replace)
+                    $(this).parent('div').off("mouseenter")
+                    $(this).parent('div').off("mouseleave")
+                    $(this).parent('div').on('mouseenter', function(e){
+                        $('#weibo_block .wimgbox').css({'display':'none'})
+                        $('#weibo_block .imgbox').css({'display':'none'})
+                        $('#weibo_block .avaterbox').css({'display':'inline-block'})
+                        $('#weibo_block .avaterbox img').attr('src',newsrc1)
+                        if((e.pageX<$(window).width()/2)){
+                            //鼠标在左半边
+                            $('#weibo_block').css({
+                                display:'block',
+                                left:'unset',
+                                right:0+'px',
+                                top:0+'px'
+                            });
+                        }else{
+                            //鼠标在右半边
+                            $('#weibo_block').css({
+                                display:'block',
+                                left:0+'px',
+                                right:'unset',
+                                top:0+'px'
+                            });
+                        }
+
+                    })
+                    $(this).parent('div').on('mouseleave',function(e){
+                        $('#weibo_block').css({display:'none'});
+                    })
+
+                }catch{
+                    console.log('找头像失败')
+                }
+
             }
+
         })
+
         console.log('已载入')
     },
+
     refresh:()=>{
         let t;
         $('#refresh-fdj .myButton').click(function(){
@@ -364,3 +393,9 @@ if(i==1){
     // setInterval(function(){a.test();},10e3)
     i++
 }
+
+
+// Your code here...
+// https://wx4.sinaimg.cn/large/6544f080gy1gncw98ndsmj23480u0kjx.jpg
+// https://wx4.sinaimg.cn/mw690/6544f080gy1gncw98ndsmj23480u0kjx.jpg
+// https://wx4.sinaimg.cn/mw2000/6544f080gy1gncw98ndsmj23480u0kjx.jpg
