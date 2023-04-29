@@ -3,7 +3,7 @@
     left: 0;
     top: 0;
     right: 0;
-
+z-index: 1003;
     /* 采用flex弹性布局，让容器内部的所有消息可以水平居中，还能任意的调整宽度 */
     display: flex;
     flex-direction: column;
