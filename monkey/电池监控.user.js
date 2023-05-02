@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         电池监控🪫
 // @namespace    http://tampermonkey.net/
-// @version      0.3
-// @description  低电量通知
+// @version      0.4
+// @description  低电量通知 胶囊型,不阻碍点击
 // @author       mxk-zwh
 // @match        https://*/*
 // @match        http://*/*
@@ -46,7 +46,7 @@ var way={
             p.innerHTML = bfvalue + "%"
             var charging = battery.charging ? "yes" : "no";
             if (charging === "yes"){
-                pt.className='ccc success';
+                pt.className='ccc c-success';
                 document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = '';
             }else {
                 document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "none";
@@ -57,23 +57,44 @@ var way={
                 console.log("电量水平变化: ", bfvalue);
                 pt.style.width = bfvalue + "%";
                 p.innerHTML = bfvalue + "%"
-
+                var cd = battery.charging?'yes':'no';
+                if (cd == 'yes'){
+                    pt.className='ccc c-success';
+                }else {
+                    if((bfvalue)<=100){cname="ccc";}
+                    if((bfvalue)<=70){cname="ccc c-warning";}
+                    if((bfvalue)<=20){cname="ccc c-danger";}
+                    pt.className=cname;
+                }
             }, false);
 
             battery.addEventListener("chargingchange", function (e) {
                 var cd = battery.charging?'yes':'no';
                 if (cd == 'yes'){
-                    pt.className='ccc success';
+                    pt.className='ccc c-success';
                     document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "";
                 }else {
                     if((bfvalue)<=100){cname="ccc";}
-                    if((bfvalue)<=70){cname="ccc warning";}
-                    if((bfvalue)<=20){cname="ccc danger";}
+                    if((bfvalue)<=70){cname="ccc c-warning";}
+                    if((bfvalue)<=20){cname="ccc c-danger";}
                     pt.className=cname;
                     document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "none";
                 }
             }, false);
         });
+        var counter=0;
+        $('.batteryShape').bind("click", function() {
+            counter++ % 2 ?
+                (function() {
+                $('.batteryShape').css("top",0);
+                $('.batteryShape').css("bottom","unset");
+            }()) :
+            (function() {
+                $('.batteryShape').css("bottom",0);
+                $('.batteryShape').css("top","unset");
+            }());
+        });
+
     },
     html:function (){
         var html=`
@@ -86,7 +107,6 @@ var way={
             </div>
             <div class="right bflex">
                 <div class="battery bflex">
-                    
                     <div class="bbb bflex">
                         <div class="ccc"></div>
                         <div class="batteryTime">${icon}</div>
@@ -105,19 +125,19 @@ var way={
              .batteryShape{
                     width: 100%;
                     height: 5%;
-                    background-color: #33333300;
+                    background-color: #333;
                     position: fixed;
                     z-index:1002;
-                    bottom: 0;
+                    top: 0;
                     left: 0;
                     right: 0;
                     opacity:0;
-                    color: black;
+                    color: #fff;
                     font: 14px/1 'Microsoft Yahei',sans-serif,Arial,Verdana;
                     font-weight: bolder;
                     box-sizing: content-box;
                     justify-content: space-between;
-                    transition: all .3s cubic-bezier(0.215, 0.610, 0.355, 1);
+                    transition: all .3s ease;
                 }
                 .batteryShape:hover{
                     opacity: 1;
@@ -150,25 +170,25 @@ var way={
                     height: 10px;
                     border-radius: 10px;
                     border:2px solid #ed333300;
-                    outline: 3px solid #000;
+                    outline: 3px solid #fff;
                     box-sizing: content-box;
                     overflow: hidden;
                 }
                 .batteryShape .right .ccc{
                     height: 15px;
-                    background-color: #000;
+                    background-color: #fff;
                     box-sizing: content-box;
                     position: relative;
                     z-index: -1;
                     width: 100%;
                 }
-                .batteryShape .right  .ccc.warning{
+                .batteryShape .right  .ccc.c-warning{
                     background-color: #f8d15b;
                 }
-                .batteryShape .right  .ccc.success{
+                .batteryShape .right  .ccc.c-success{
                     background-color: chartreuse;
                 }
-                .batteryShape .right  .ccc.danger{
+                .batteryShape .right  .ccc.c-danger{
                     background-color: #fd2c72;
                 }
                 .batteryShape .right .batteryTime{
