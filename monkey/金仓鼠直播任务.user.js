@@ -156,11 +156,18 @@ let way={
                     <p class="info-title">贝壳账户</p>
                     <p class="pay-shell-index-num">${a}</p>
                     <p class="info-title">金仓鼠总账户</p>
-                    <p class="value">${total}</p>
+                    <p class="value">${total.replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")}
+                       <span class="account-draw-num">（普快总 ${((total-0)/1000).toFixed(1)}元）</span>
+                    </p>
                     <p class="info-title">金仓鼠普通用户</p>
-                    <p class="value">${common}</p>
+                    <p class="value">${common.replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")}
+                        <span class="account-draw-num">（普本月 ${((common-0)/1000).toFixed(1)}元）</span>
+                    </p>
                     <p class="info-title">金仓鼠快捷账户</p>
-                    <p class="value">${quick}</p>
+
+                    <p class="value">${quick.replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")}
+                     <span class="account-draw-num">（快未提 ${((quick-0)/1000).toFixed(1)}元）</span>
+                     </p>
                     
                 </div>
             </div>
@@ -367,6 +374,11 @@ let way={
                 margin-bottom: 20px;
                 margin-top: 2px;
             }
+            .income-info .item .account-draw-num{
+                font-size: 14px;
+                color: #f7b500;
+                font-style: normal;
+            }
             .pay-shell-index-num {
                 font-size: 50px;
                 color: #01b5e7;
@@ -384,18 +396,23 @@ let way={
         `)
     },
     getAccountBalance:async()=>{
-        var csrftoken= decodeURIComponent(document.cookie.replace(new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent('bili_jct').replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'), '$1')) || null;
+        try{
+            var csrftoken= decodeURIComponent(document.cookie.replace(new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent('bili_jct').replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$'), '$1')) || null;
 
-        BAPI.setCommonArgs(csrftoken,'');
-        var ai=await BAPI.ajaxWithCommonArgs({
-            method: 'POST',
-            url: 'xlive/revenue/v1/anchorAccount/getAccountBalance'
-        })
-        var ma=ai.data.account_info.month_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
-        var qa=ai.data.account_info.quick_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
-        // var qal=ai.data.account_info.quick_account_lock
-        var ta=ai.data.account_info.total_account.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,")
-        return [ta,ma,qa]
+            BAPI.setCommonArgs(csrftoken,'');
+            var ai=await BAPI.ajaxWithCommonArgs({
+                method: 'POST',
+                url: 'xlive/revenue/v1/anchorAccount/getAccountBalance'
+            })
+            var ma=ai.data.account_info.month_account.toString()
+            var qa=ai.data.account_info.quick_account.toString()
+            // var qal=ai.data.account_info.quick_account_lock
+            var ta=ai.data.account_info.total_account.toString()
+            return [ta,ma,qa]
+        }catch{
+            console.log('可能未登录')
+        }
+
     },
     getUserWalletInfo:()=>{
         var brokerage;
