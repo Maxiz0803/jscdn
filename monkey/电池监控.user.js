@@ -1,24 +1,28 @@
 // ==UserScript==
 // @name         电池监控🪫
 // @namespace    http://tampermonkey.net/
-// @version      0.4
-// @description  低电量通知 胶囊型,不阻碍点击
+// @version      0.5
+// @description  电量显示 胶囊型,不阻碍点击 低电量页面内弹窗提示，window系统通知
 // @author       mxk-zwh
 // @match        https://*/*
 // @match        http://*/*
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAmCAYAAAC29NkdAAACWklEQVRYhe2YMU/bQBTH/3dJm0JBbS01hXoAIadKBw+MbQeGfoKuLB1ZWVkY+i06sDD0E3RgYchCVQZQCQhQM1SVUnUoqcAqbgH7eCZYcuO7cImTYJD/kiPr7Of7+d17z/fCBAkpFr9ugKuUASZVBphUqQfMa911KlD9TocDnIVjdwD7McN0kcltPIFanWwagBOO5YAJg+GVyTQnBtjVdVBgdd3Hiiu/Om3lMGvGx6tbHpZ/y23MpxzzJcWL6QK6Bz5WfwAN8sS3w4gXWpQvMDy/Fx+vOwINX2EUeH+YvFgAZqY4zEJHgLQ0Oz7e/1Ib9Vovyxxvnsg9Gk8SipvlAcIFWvtKserJr8VitXogEIbbBMXK7Fj/wDb3Kbb/4CKhqj9p2SWxHAN0I28ySRlnjPYPsHwfTcBg3jP5PQOogwIrnz0sfvGhKARtNRDA+l/y0DFVhC6s9eolxYhDE5y2jlPiGSPqQh3ahKvnBKWnnU13gAIfPvnYVGSZaVLRtVonFKhs+Ph4HBk6EVjaaFa0IYPjna0HqeVB+wFQO5Jc4Az2Q9lEDBaNGwQVeNC5dOFQvjmh9UiLTReQIOwcbP1nXsgscSyUgjMfSxWBvbsMcy/oq9Hhc27JbiaRaPcyTh4dZR17L9BAAMvP6OjSOvVLnAEmVVtA1Qe8V3IVxT+qWJJYI/RzWZTX9z3s1npMFZETccCkIb8nBmjQFnyGtvuVfwi+WP89pF8qFjleK7Z18p6EurjKNvUk1Ii4/fxribq88hjHW0vd5Wl0dderm53FaVAGmFQZYFKlHvAc2/G61yINYTgAAAAASUVORK5CYII=
 // @require      https://static.hdslb.com/js/jquery.min.js
+// @require      https://raw.iqiq.io/mxk-zwh/jscdn/main/message.js
+// @resource css https://raw.iqiq.io/mxk-zwh/jscdn/main/message.css
 // @connect      hamibot.cn
 // @run-at       document-body
+// @grant        GM_notification
+// @grant        GM_getResourceText
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
 // ==/UserScript==
 //hamibot robotid  hmp
-var low=30
+var low=50
 var i=1;
 var icon='<svg class="vvvv"  style="width: 1em;height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2257"><path d="M719.383063 459.766775h-144.688432l28.505946-212.18018a4.612613 4.612613 0 0 0-8.210451-3.431784l-245.132685 317.347748a11.236324 11.236324 0 0 0 8.893118 18.099891h144.688432l-28.505946 212.180181a4.612613 4.612613 0 0 0 8.21045 3.431783l245.132685-317.347747a11.236324 11.236324 0 0 0-8.893117-18.099892z" p-id="2258"></path></svg>'
 var flag=true
-
+const message = new Message();
 function dateFilter(date) {
     if (date < 10) {
         return "0" + date;
@@ -28,7 +32,24 @@ function dateFilter(date) {
 
 /*设置调用间隔*/
 
-
+var notificationWarn={
+    text:"主人，电脑该充电了喵~",
+    title:"低电量提醒",
+    timeout:10000,
+    image:"https://i0.hdslb.com/bfs/face/93bba0fb2fc3c1ad1ead9a5e4db031ef36f532d5.jpg"
+}
+var notificationDanger={
+    text:"主人，电脑快没电了喵~",
+    title:"低电量提醒",
+    timeout:10000,
+    image:"https://i0.hdslb.com/bfs/face/ba9ce36ef60a53e24a97f54429e62bdb951530a0.jpg"
+}
+var notificationSuc={
+    text:"主人，电脑快充满了喵~",
+    title:"充满电提醒",
+    timeout:10000,
+    image:"https://c-ssl.dtstatic.com/uploads/blog/202207/05/20220705231022_cac23.thumb.400_0.jpeg"
+}
 var way={
     battery:()=>{
         var pt = document.querySelector('.batteryShape .battery .bbb .ccc');
@@ -55,6 +76,9 @@ var way={
                 value=battery.level
                 bfvalue=parseInt(value * 100)
                 console.log("电量水平变化: ", bfvalue);
+                if (bfvalue>98){
+                    GM_notification(notificationSuc)
+                }
                 pt.style.width = bfvalue + "%";
                 p.innerHTML = bfvalue + "%"
                 var cd = battery.charging?'yes':'no';
@@ -71,9 +95,26 @@ var way={
             battery.addEventListener("chargingchange", function (e) {
                 var cd = battery.charging?'yes':'no';
                 if (cd == 'yes'){
+                    message.show({
+                        type: 'success',
+                        text: "在充电"
+                    });
                     pt.className='ccc c-success';
                     document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "";
                 }else {
+                    if (bfvalue<=40){
+                        GM_notification(notificationDanger)
+                        message.show({
+                            type: 'danger',
+                            text: "快没电了，快去充电啊~"
+                        });
+                    }else if(bfvalue<=low){
+                        GM_notification(notificationWarn)
+                        message.show({
+                            type: 'warning',
+                            text: "电量少，快去充电啊~"
+                        });
+                    }
                     if((bfvalue)<=100){cname="ccc";}
                     if((bfvalue)<=70){cname="ccc c-warning";}
                     if((bfvalue)<=20){cname="ccc c-danger";}
@@ -98,6 +139,7 @@ var way={
     },
     html:function (){
         var html=`
+        <link rel="stylesheet" href="//at.alicdn.com/t/font_1117508_wxidm5ry7od.css">
         <div class="batteryShape bflex">
             <div class="left bflex">
                 <div class="ampm"></div>
@@ -197,6 +239,7 @@ var way={
                     font-size:27px;
                 }
         `)
+        GM_addStyle(GM_getResourceText("css"));
     },
     fun_clock:function(){
         var today = new Date();
