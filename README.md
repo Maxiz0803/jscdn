@@ -6,10 +6,10 @@
 -->
 
 <img src="https://user-images.githubusercontent.com/72368111/236430549-5696ef58-4fc8-4547-8914-06cf0131feb7.jpg" width = "450" height = "400" alt="vme50" align="center" />
-<center class="half">
+<figure>
   <img src="https://user-images.githubusercontent.com/72368111/236434269-f4d00a94-c2eb-4cdb-af3a-1474a67ed0ae.jpg" width = "200" height = "200" alt="wcpay" align="center" />
 <img src="https://user-images.githubusercontent.com/72368111/236425874-a147603d-8cb4-42dc-9952-b57411b04ac4.jpg" width = "200" height = "200" alt="ALIPAYlottery" align="center" />
-</center>
+</figure>
 
 
 祝你学业有成，平安喜乐，事业安康
