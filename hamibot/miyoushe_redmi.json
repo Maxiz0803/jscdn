@@ -1,0 +1,17 @@
+[
+  {
+    "label": "解锁密码",
+    "name": "screen_pwd",
+    "validation": "required"
+  },
+  {
+    "label": "签到的游戏",
+    "name": "game",
+    "type": "select",
+    "validation": "required",
+    "options": {
+      "xqtd": "星穹铁道",
+      "ys": "原神"
+    }
+  }
+]
