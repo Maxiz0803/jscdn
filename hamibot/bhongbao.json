@@ -1,36 +1,41 @@
 [
-  {
-    "label": "解锁密码",
-    "name": "screen_pwd",
-    "validation": "required"
-  },
-  {
-    "label": "显示控制台(需要悬浮窗权限)",
-    "type": "select",
-    "name": "SHOW_CONSOLE",
-    "options": {
-      "true": "是",
-      "false": "否"
+    {
+        "label": "解锁密码",
+        "name": "screen_pwd",
+        "validation": "required"
+    },
+    {
+        "label": "企业api-webhook",
+        "name": "webhookUrl",
+        "validation": "required"
+    },
+    {
+        "label": "显示控制台(需要悬浮窗权限)",
+        "type": "select",
+        "name": "SHOW_CONSOLE",
+        "options": {
+            "true": "是",
+            "false": "否"
+        }
+    },
+    {
+        "label": "双开应用第几个(1,2)",
+        "name": "double_open",
+        "type": "select",
+        "validation": "required",
+        "options": {
+            "1": 1,
+            "2": 2
+        }
+    },
+    {
+        "label": "语言",
+        "name": "Language",
+        "type": "select",
+        "validation": "required",
+        "options": {
+            "zh-CN": "中文",
+            "en-US": "English"
+        }
     }
-  },
-  {
-    "label": "双开应用第几个(1,2)",
-    "name": "double_open",
-    "type": "select",
-    "validation": "required",
-    "options": {
-      "1": 1,
-      "2": 2
-    }
-  },
-  {
-    "label": "语言",
-    "name": "Language",
-    "type": "select",
-    "validation": "required",
-    "options": {
-      "0": "中文",
-      "1": "English"
-    }
-  }
 ]
