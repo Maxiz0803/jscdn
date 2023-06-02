@@ -1,5 +1,6 @@
 const {
     screen_pwd,
+    webhookUrl,
     SHOW_CONSOLE,
     double_open,
     Language,
@@ -130,7 +131,7 @@ if (!files.exists(audioPath)) {
     var audioData = res.body.bytes(); // 获取下载的数据
     files.writeBytes(audioPath, audioData); // 将数据写入文件
 }
-var url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=31fc3a61-3cd1-4985-ba1c-f771fd05053d"; // 替换为实际的 Webhook 地址 2233
+var wxurl = webhookUrl; // 替换为实际的 Webhook 地址 2233
 var json = {
     "msgtype": "markdown",
     "markdown": {
@@ -177,7 +178,7 @@ var tools = {
     },
     send: (text) => {
         json.markdown.content = text
-        http.postJson(url, json);
+        http.postJson(wxurl, json);
     }
 }
 var hongbao = {
