@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         B站取关
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  慢慢取关，ctm rnm
 // @author       You
 // @require      https://static.hdslb.com/js/jquery.min.js
+// @require      https://raw.iqiq.io/MonkSoul/Layx/master/layx.min.js
+// @resource xcss https://raw.iqiq.io/MonkSoul/Layx/master/layx.min.css
 // @require      https://raw.iqiq.io/mxk-zwh/jscdn/main/message.js
 // @resource css https://raw.iqiq.io/mxk-zwh/jscdn/main/message.css
 // @match        https://space.bilibili.com/*/fans/follow*
@@ -16,23 +18,27 @@
 // @grant        GM_addStyle
 // ==/UserScript==
 
-
 var html=`
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1117508_wxidm5ry7od.css">
 <div id="b-cancel-follow">
   <div class="b-btn cancel-hand">手动取关</div>
+  <div class="b-btn clean_unuid">清理空号</div>
   <div class="b-btn next-page">下一页</div>
   <div class="b-btn cancel-auto">自动取关</div>
   <div class="b-btn auto-cancel">暂停取关</div>
 </div>
 `
-$('body').append(html);
+layx.html('str','B站取关',html,{
+    width:300,
+    height:300,
+    position:'rb'
+});
 var css=`
    <style>
   #b-cancel-follow {
     position: fixed;
-    bottom: 100px;
-    right: 100px;
+    top: 50px;
+    left: 50px;
     z-index: 11;
   }
   #b-cancel-follow .b-btn {
@@ -53,6 +59,11 @@ var css=`
     background: linear-gradient(90deg, #e1c80f 0, #2cb3a5 100%);
 
   }
+  #b-cancel-follow .clean_unuid{
+
+    background: linear-gradient(50deg, #f1ffd7 0, #2cb3a5 100%);
+
+  }
   #b-cancel-follow .next-page{
     background: linear-gradient(90deg, #8a6ff4 0, #f136f4 100%);
   }
@@ -60,6 +71,10 @@ var css=`
     background: linear-gradient(90deg, #d9d622 0, #e33131 100%);
   }
   #b-cancel-follow .cancel-hand:hover {
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #e2e231 0, #32e0ce 100%);
+  }
+  #b-cancel-follow .clean_unuid:hover {
     margin-bottom: 10px;
     background: linear-gradient(90deg, #e2e231 0, #32e0ce 100%);
   }
@@ -111,20 +126,24 @@ var css=`
 $('head').append(css)
 const message = new Message();
 GM_addStyle(GM_getResourceText("css"));
-
+GM_addStyle(GM_getResourceText("xcss"));
 var t;
 $('#b-cancel-follow .cancel-hand').click(function(){
-    a.unfollow()
+    a.unfollow_all()
+})
+$('#b-cancel-follow .clean_unuid').click(function(){
+    a.clean_unuid()
 })
 $('#b-cancel-follow .next-page').click(function(){
     a.next()
 })
 $('#b-cancel-follow .cancel-auto').click(function(){
     $('#b-cancel-follow .cancel-auto').css('display','none')
+    $('#b-cancel-follow .clean_unuid').css('display','none')
     $('#b-cancel-follow .next-page').css('display','none')
     $('#b-cancel-follow .auto-cancel').css('display','block')
     $('#b-cancel-follow .cancel-hand').css('display','none')
-    t = setInterval(function(){a.unfollow()}, 5000)
+    t = setInterval(function(){a.unfollow_all()}, 5000)
     message.show({
         type: 'success',
         text: '已开启自动取关'
@@ -132,6 +151,7 @@ $('#b-cancel-follow .cancel-auto').click(function(){
 })
 $('#b-cancel-follow .auto-cancel').click(function(){
     $('#b-cancel-follow .auto-cancel').css('display','none')
+    $('#b-cancel-follow .clean_unuid').css('display','')
     $('#b-cancel-follow .cancel-auto').css('display','block')
     $('#b-cancel-follow .cancel-hand').css('display','block')
     $('#b-cancel-follow .next-page').css('display','block')
@@ -143,7 +163,7 @@ $('#b-cancel-follow .auto-cancel').click(function(){
 })
 
 var a={
-    unfollow:()=>{
+    unfollow_all:()=>{
         if($(".be-dropdown-item:contains('取消关注')").length>0){
             $(".be-dropdown-item:contains('取消关注'):lt(4)").click();
             message.show({
@@ -155,9 +175,43 @@ var a={
                 type: 'error',
                 text: '取关没有了'
             });
-            a.next()
         }
 
+    },
+    clean_unuid:()=>{
+        var zx=$("span.fans-name:contains('账号已注销')").length
+
+        if(zx>0){
+
+            message.show({
+                type: 'warning',
+                text: '发现'+zx+'个空号'
+            });
+            $('span.fans-name:contains("账号已注销")').each(function(){
+                // 找到对应的取消关注按钮并模拟点击
+                try{
+                    $(this).parents('.list-item').find(".be-dropdown-item:contains('取消关注')").click();
+                    message.show({
+                        type: 'success',
+                        text: '已经取关'
+                    });
+                    a.next()
+                }catch{
+                    message.show({
+                        type: 'error',
+                        text: '取关失败'
+                    });
+                }
+            });
+
+        }else{
+            message.show({
+                type: 'warning',
+                text: '未发现空号'
+            });
+            a.next()
+
+        }
     },
     next:()=>{
         if(!($(".be-pager-next.be-pager-disabled").length>0)){
@@ -171,6 +225,7 @@ var a={
                 text: '已经见底了'
             });
             $('#b-cancel-follow .auto-cancel').css('display','none')
+            $('#b-cancel-follow .clean_unuid').css('display','')
             $('#b-cancel-follow .cancel-auto').css('display','block')
             $('#b-cancel-follow .cancel-hand').css('display','block')
             $('#b-cancel-follow .next-page').css('display','block')
