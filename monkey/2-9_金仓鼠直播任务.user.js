@@ -29,9 +29,8 @@ const startLive="https://link.bilibili.com/p/center/index#/my-room/start-live";
 const startliveReg=new RegExp("/my-room/start-live");
 const taskcenterReg=new RegExp("live-activity-full/task_center");
 // const cd=top.window.localStorage.PAGE_REFRESH_CD_CACHE
-GM_setValue('myroomid',23543594)
-const myRoom="http://live.bilibili.com/"+GM_getValue('myroomid');
 const mySpace="http://space.bilibili.com/"+GM_getValue('myuid');
+const myRoom="http://live.bilibili.com/"+GM_getValue('myroomid');
 //用于创建 天天开播领奖励 的按钮
 let way={
     //进入任务中心的按钮
@@ -442,6 +441,11 @@ let way={
                     this.addstyle1()
                     this.taskcenter()
                     this.changeBG()
+                    setTimeout(function() {
+                        var myroomid = top.document.querySelector('#live-center-app a.blink.blue').innerText
+                        GM_setValue('myroomid',myroomid)
+                        myroomid=null;
+                    }, 2500);
                 }else{
                     $('#task_center_mgll').remove();
                 }
@@ -464,4 +468,7 @@ let way={
 
     }
 }
-way.start()
+$(document).ready(function() {
+    way.start()
+});
+
