@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         电池监控🪫
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      1.0
 // @description  胶囊型电量显示 ,不阻碍点击，低电量页面提示/系统通知，尝试解决http不支持方案，防止被导航栏遮住
 // @author       mxk-zwh
 // @match        https://*/*
@@ -21,19 +21,15 @@
 // ==/UserScript==
 
 // 低电量
-var low=30
-var i=1;
-var baifenhao='<svg  class="uuuu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="33" height="29" viewBox="0 0 33 29" fill="none"><g opacity="1"  transform="translate(0 0)  rotate(0)"><path id="圆形 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M7,3.77c-1.62,0 -2.94,1.22 -2.94,2.73c0,1.51 1.32,2.73 2.94,2.73c1.62,0 2.94,-1.22 2.94,-2.73c0,-1.51 -1.32,-2.73 -2.94,-2.73zM14,6.5c0,3.59 -3.13,6.5 -7,6.5c-3.87,0 -7,-2.91 -7,-6.5c0,-3.59 3.13,-6.5 7,-6.5c3.87,0 7,2.91 7,6.5z"></path><path id="圆形 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M26,19.77c-1.62,0 -2.94,1.22 -2.94,2.73c0,1.51 1.32,2.73 2.94,2.73c1.62,0 2.94,-1.22 2.94,-2.73c0,-1.51 -1.32,-2.73 -2.94,-2.73zM33,22.5c0,3.59 -3.13,6.5 -7,6.5c-3.87,0 -7,-2.91 -7,-6.5c0,-3.59 3.13,-6.5 7,-6.5c3.87,0 7,2.91 7,6.5z"></path><path id="路径 2" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M9 27.5L28.5 1L24 1L4.5 27.5L9 27.5Z"></path><path  id="路径 2" style="fill:#FFFFFF; opacity:1;" d="M8.59728,27.2037l19.50002,-26.50004l0.4027,0.29634v0.5h-4.5v-0.5l0.4027,0.29634l-19.49998,26.49996l-0.40272,-0.2963v-0.5h4.5v0.5zM9.25286,28h-5.74156l20.2358,-27.5h5.7416l-20.08598,27.2963z"></path></g></svg>'
+const low=30;
+const baifenhao='<svg  class="uuuu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="33" height="29" viewBox="0 0 33 29" fill="none"><g opacity="1"  transform="translate(0 0)  rotate(0)"><path id="圆形 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M7,3.77c-1.62,0 -2.94,1.22 -2.94,2.73c0,1.51 1.32,2.73 2.94,2.73c1.62,0 2.94,-1.22 2.94,-2.73c0,-1.51 -1.32,-2.73 -2.94,-2.73zM14,6.5c0,3.59 -3.13,6.5 -7,6.5c-3.87,0 -7,-2.91 -7,-6.5c0,-3.59 3.13,-6.5 7,-6.5c3.87,0 7,2.91 7,6.5z"></path><path id="圆形 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M26,19.77c-1.62,0 -2.94,1.22 -2.94,2.73c0,1.51 1.32,2.73 2.94,2.73c1.62,0 2.94,-1.22 2.94,-2.73c0,-1.51 -1.32,-2.73 -2.94,-2.73zM33,22.5c0,3.59 -3.13,6.5 -7,6.5c-3.87,0 -7,-2.91 -7,-6.5c0,-3.59 3.13,-6.5 7,-6.5c3.87,0 7,2.91 7,6.5z"></path><path id="路径 2" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M9 27.5L28.5 1L24 1L4.5 27.5L9 27.5Z"></path><path  id="路径 2" style="fill:#FFFFFF; opacity:1;" d="M8.59728,27.2037l19.50002,-26.50004l0.4027,0.29634v0.5h-4.5v-0.5l0.4027,0.29634l-19.49998,26.49996l-0.40272,-0.2963v-0.5h4.5v0.5zM9.25286,28h-5.74156l20.2358,-27.5h5.7416l-20.08598,27.2963z"></path></g></svg>'
 // 闪电图标
-var icon='<svg xmlns="http://www.w3.org/2000/svg" class="vvvv" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="50" viewBox="0 0 28 50" fill="none"><path id="路径 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M4.25 21.7106L11.3 21.7106C12.16 21.7006 12.63 22.7206 12.06 23.3706L1.44 35.5506C0.87 36.2006 1.34 37.2206 2.2 37.2106L10.13 37.2106C10.8 37.2106 11.28 37.8706 11.08 38.5106L7.5 49.7106L25.44 30.3906C26.03 29.7506 25.58 28.7106 24.71 28.7106L17.8 28.7106C16.93 28.7106 16.48 27.6706 17.07 27.0306L27.93 15.3906C28.52 14.7506 28.07 13.7106 27.2 13.7106L18.73 13.7106C18.1 13.7106 17.62 13.1306 17.75 12.5106L20 1.71063L3.5 20.0406C2.92 20.6906 3.38 21.7206 4.25 21.7106Z"></path></svg>'
+const icon='<svg xmlns="http://www.w3.org/2000/svg" class="vvvv" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="50" viewBox="0 0 28 50" fill="none"><path id="路径 1" fill-rule="evenodd" style="fill:#FFFFFF" opacity="1" d="M4.25 21.7106L11.3 21.7106C12.16 21.7006 12.63 22.7206 12.06 23.3706L1.44 35.5506C0.87 36.2006 1.34 37.2206 2.2 37.2106L10.13 37.2106C10.8 37.2106 11.28 37.8706 11.08 38.5106L7.5 49.7106L25.44 30.3906C26.03 29.7506 25.58 28.7106 24.71 28.7106L17.8 28.7106C16.93 28.7106 16.48 27.6706 17.07 27.0306L27.93 15.3906C28.52 14.7506 28.07 13.7106 27.2 13.7106L18.73 13.7106C18.1 13.7106 17.62 13.1306 17.75 12.5106L20 1.71063L3.5 20.0406C2.92 20.6906 3.38 21.7206 4.25 21.7106Z"></path></svg>'
 // 网页内 消息提示 new一个
 const message = new Message();
 // 日期 缺零 补全
 function dateFilter(date) {
-    if (date < 10) {
-        return "0" + date;
-    }
-    return date;
+    return date < 10 ? "0" + date : date;
 }
 function jieliu(fn,delay){
     let timer=null
@@ -63,6 +59,11 @@ function BatteryLog(value){
     }
     console.log('%c 电量水平变化:'+value+ ' ',`background-color:${bg_color};border-radius:15px;padding:5px;font-weight:bold;color:${txt_color};border:1px solid ${txt_color};`)
 }
+function formatTime(timeInSeconds,value) {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    return `剩余：\n${hours}h ${minutes}min`;
+}
 // 电脑 系统 消息
 var notification={
     warn:{
@@ -86,22 +87,20 @@ var notification={
 }
 var way={
     battery:()=>{
+        var timeTip=document.querySelector('.batteryShape .battery.bflex');// 使用时间
         var pt = document.querySelector('.batteryShape .battery .bbb .ccc');// 电量
         var p = document.querySelector('.batteryShape .battery .dianliang');// 电量值
         try{
             // https
             navigator.getBattery().then(function(battery) {
-                var time,cname,txtcolor;
-                time=(
-                    battery.dischargingTime!='Infinity'?
-                    "剩余："+parseInt(battery.dischargingTime/3600)+'h'+parseInt(battery.dischargingTime%3600/60)+'m'+(battery.dischargingTime%3600%60)+'s'
-                    :"可用（电源已接通）"
-                )// 还能用多久
                 //电量
                 var value=battery.level
                 var bfvalue=parseInt(value * 100)
+                var time=(battery.dischargingTime !== Infinity)? formatTime(parseInt(battery.dischargingTime)): "\n可用（电源已接通）";
                 if(bfvalue){ GM_setValue('电量',bfvalue)}
+                if(time){GM_setValue('时长',time)}
                 pt.style.width = bfvalue + "%";
+                timeTip.title=`电量状态:${pt.style.width} ${time}`
                 p.innerHTML = bfvalue
                 //充电状态
                 var charging = battery.charging ? "yes" : "no";
@@ -109,10 +108,10 @@ var way={
                 if (charging === "yes"){
                     //充电颜色
                     pt.style.background="#49b216";
-                    document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = '';
+                    $('.batteryShape .battery .batteryTime .vvvv').show();
                 }else {
                     pt.style.background="";
-                    document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "none";
+                    $('.batteryShape .battery .batteryTime .vvvv').hide();
                 }
                 //电量变化
                 battery.addEventListener("levelchange", function(e) {
@@ -122,10 +121,14 @@ var way={
                     if(bfvalue){ GM_setValue('电量',bfvalue)}
                     BatteryLog(bfvalue)
                     pt.style.width = bfvalue + "%";
+
+                    time=(battery.dischargingTime !== Infinity)? formatTime(parseInt(battery.dischargingTime)): "\n可用（电源已接通）";
+                    if(time){GM_setValue('时长',time)}
+                    timeTip.title=`电量状态:${pt.style.width} ${time}`
                     p.innerHTML = bfvalue
                     //电量系统通知 一次: 充满 没电
-                    var cd = battery.charging?'yes':'no';
-                    if (cd == 'yes'){
+                    const cd = battery.charging ? 'yes' : 'no';
+                    if (cd === 'yes'){
                         if (bfvalue>98){
                             GM_notification(notification.success)
                         }
@@ -152,20 +155,24 @@ var way={
                 }, false);
                 // 充电变化 页面内通知 一次:在充 没充
                 battery.addEventListener("chargingchange", function (e) {
-                    var cd = battery.charging?'yes':'no';
-                    if(cd){ GM_setValue('充电吗',cd)}
-                    if (cd == 'yes'){
+                    time=(battery.dischargingTime !== Infinity)? formatTime(parseInt(battery.dischargingTime)): "\n可用（电源已接通）";
+                    if(time){GM_setValue('时长',time)}
+                    timeTip.title=`电量状态:${pt.style.width} ${time}`
+
+                    const cd = battery.charging ? 'yes' : 'no';
+                    GM_setValue('充电吗',cd)
+                    if (cd === 'yes'){
                         message.show({
                             type: 'success',
                             text: "在充电"
                         });
                         //充电颜色
                         pt.style.background="#49b216";
-                        document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "";
+                        $('.batteryShape .battery .batteryTime .vvvv').show();
 
                     }else {
                         pt.style.background="";
-                        document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "none";
+                        $('.batteryShape .battery .batteryTime .vvvv').hide();
 
                     }
                 }, false);
@@ -173,40 +180,63 @@ var way={
         }catch{
             // http 
             console.log('第一个失败，尝试第二个')
+            const  bfvalue=GM_getValue('电量')
+            pt.style.width = bfvalue + "%";
+            p.innerHTML = bfvalue
+
+            timeTip.title=`电量状态:${pt.style.width} ${GM_getValue('时长')}`;
+
+            const  cd=GM_getValue('充电吗')
+            //充电
+            if (cd == 'yes'){
+                //充电颜色
+                pt.style.background="#49b216";
+                $('.batteryShape .battery .batteryTime .vvvv').show();
+            }else {
+                pt.style.background="";
+                $('.batteryShape .battery .batteryTime .vvvv').hide();
+            }
             setInterval(()=>{
                 //电量
                 var bfvalue=GM_getValue('电量')
                 pt.style.width = bfvalue + "%";
                 p.innerHTML = bfvalue
                 BatteryLog(bfvalue);
+
+                timeTip.title=`电量状态:${pt.style.width} ${GM_getValue('时长')}`
+
                 var cd=GM_getValue('充电吗')
                 //充电
                 if (cd == 'yes'){
                     //充电颜色
                     pt.style.background="#49b216";
-                    document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "";
+                    $('.batteryShape .battery .batteryTime .vvvv').show();
                 }else {
                     pt.style.background="";
-                    document.querySelector('.batteryShape .battery .batteryTime .vvvv').style.display = "none";
+                    $('.batteryShape .battery .batteryTime .vvvv').hide();
                 }
-            }, 10000);
+                bfvalue = null;
+                cd = null;
+            }, 5000);
         }
         //上下切换
         var counter=0;
         $('.batteryShape').bind("click", function() {
             counter++ % 2 ?
-                (function() {
-                $('.batteryShape').css("top",0);
-                $('.batteryShape').css("bottom","unset");
-                $('.batteryShape').css("border-bottom","1px solid #000dff");
-                $('.batteryShape').css("border-top","unset");
-            }()) :
-            (function() {
-                $('.batteryShape').css("bottom",0);
-                $('.batteryShape').css("top","unset");
-                $('.batteryShape').css("border-top","1px solid #000dff");
-                $('.batteryShape').css("border-bottom","unset");
-            }());
+                $('.batteryShape')
+                .css({
+                "top": 0,
+                "bottom": "unset",
+                "border-bottom": "1px solid #000dff",
+                "border-top": "unset"
+            }) :
+            $('.batteryShape')
+                .css({
+                "bottom": 0,
+                "top": "unset",
+                "border-top": "1px solid #000dff",
+                "border-bottom": "unset"
+            });
         });
 
     },
@@ -215,7 +245,6 @@ var way={
         <link rel="stylesheet" href="//at.alicdn.com/t/font_1117508_wxidm5ry7od.css">
         <div class="batteryShape bflex">
             <div class="left bflex">
-                <div class="ampm"></div>
                 <div id="myclock"></div>
             </div>
             <div class="center">
@@ -247,7 +276,7 @@ var way={
                     right: 0;
                     opacity: 0;
                     position: fixed;
-                    z-index:8002;
+                    z-index: 10010;
                     width: 100%;
                     height: 36px;
                     margin: 0px;
@@ -266,17 +295,34 @@ var way={
                     display: flex;
                     align-items: center;
                 }
+                .batteryShape .left{
+                    padding: 2px;
+                    border-radius: 5px;
+                    margin-left: 4px;
+                    padding-top: 3px;
+                    padding-right: 8px;
+                }
+                .batteryShape .left:hover{
+                    background: #9366e340;
+                }
                 .batteryShape .left .ampm {
                     margin-left: 5px;
                     font-weight: bold;
                     letter-spacing: 1px;
                 }
                 .batteryShape .left #myclock{
-                font-weight: bold;
+                    font-weight: bold;
+                }
+                .batteryShape .right{
+                    padding: 2px;
+                    border-radius: 5px;
+                    margin-right: 4px;
+                }
+                .batteryShape .right:hover{
+                    background: #9366e340;
                 }
                 .batteryShape .right .battery{
                      margin-right: 5px;
-
                 }
                 .shabi{
                     display:flex;
@@ -287,12 +333,7 @@ var way={
                     text-align: center;
                 }
                 .batteryShape .right .battery .baifenhao{
-                    font-weight: bold;
                     font-size: 8px;
-                    text-align: center;
-                    display: flex;
-                    height: 17px;
-                    align-items: center;
                 }
                 .batteryShape .right .bbb{
                     margin-left: 5px;
@@ -311,7 +352,7 @@ var way={
                     background-size: 38px 26px;
                     box-sizing: content-box;
                     position: relative;
-                    z-index: -1;
+                    z-index: 0;
                     width: 100%;
                 }
                 .batteryShape .right .batteryTime{
@@ -345,72 +386,47 @@ var way={
         GM_addStyle(GM_getResourceText("css"));
     },
     fun_clock:function(){
-        var today = new Date();
+        const today = new Date();
+        const hour = today.getHours();
+        const minute = today.getMinutes();
 
-        var month = today.getMonth() + 1;
-        var date = today.getDate();
-        var hour = today.getHours(); //获得小时、分钟、秒
-        var minute = today.getMinutes();
-
-        var weekday = 0;
-        var ampm = document.querySelector(".batteryShape .left .ampm");
         if (hour < 6) {
-            ampm.innerHTML = "凌晨";
+            notification.ampm = "凌晨";
         } else if (hour < 9) {
-            ampm.innerHTML = "早上";
+            notification.ampm = "早上";
         } else if (hour < 12) {
-            ampm.innerHTML = "上午";
+            notification.ampm = "上午";
         } else if (hour < 14) {
-            ampm.innerHTML = "中午";
+            notification.ampm = "中午";
         } else if (hour < 17) {
-            ampm.innerHTML = "下午";
+            notification.ampm = "下午";
         } else if (hour < 19) {
-            ampm.innerHTML = "晚上";
+            notification.ampm = "晚上";
         } else {
-            ampm.innerHTML = "晚上";
+            notification.ampm = "晚上";
         }
 
-        switch (today.getDay()) {
-            case 0:
-                weekday = "星期日";
-                break;
-            case 1:
-                weekday = "星期一";
-                break;
-            case 2:
-                weekday = "星期二";
-                break;
-            case 3:
-                weekday = "星期三";
-                break;
-            case 4:
-                weekday = "星期四";
-                break;
-            case 5:
-                weekday = "星期五";
-                break;
-            case 6:
-                weekday = "星期六";
-                break;
+        const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+        const weekday = weekdays[today.getDay()];
+
+        let formattedHour = hour;
+        if (hour > 12) {
+            formattedHour = hour - 12;
         }
-        if (hour>12) //按12小时制显示  在前端页面用html做一个简单的时间显示（12小时制）
-        {
-            hour=hour-12;
-        }
-        /*设置当前时间*/
-        document.getElementById("myclock").innerHTML =
-            hour +
-            ":"+
-            dateFilter(minute) +
-            "    "+
-            month +
-            "月" +
-            date +
-            "日" +
-            weekday;
+
+        const formattedMinute = dateFilter(minute);
+        const formattedMonth = today.getMonth() + 1;
+        const formattedDate = today.getDate();
+
+        const clockElement = document.getElementById("myclock");
+        const leftElement=document.querySelector(".batteryShape .left");
+        const clock= `${notification.ampm}${formattedHour}:${formattedMinute}  ${formattedMonth}月${formattedDate}日  ${weekday}`;
+        clockElement.innerHTML = clock;
+        leftElement.title = clock;
     }
 }
 // 只允许1次
+var i=1;
 if(i==1){
     way.css();
     way.html();
