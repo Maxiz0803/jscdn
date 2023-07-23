@@ -67,6 +67,7 @@
 
     var createFileBtn = document.createElement('button');
     createFileBtn.innerHTML = '生成新建文件命令';
+    createFileBtn.style.marginRight = '10px';
     floatingWindow.appendChild(createFileBtn);
 
     var copyBtn = document.createElement('button');
