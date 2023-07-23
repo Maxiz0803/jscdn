@@ -2,7 +2,7 @@
 // @name         cmd命令生成
 // @namespace    your-namespace
 // @icon         cmd
-// @version      1.0
+// @version      1.1
 // @description  在 gitcode.net 网页上显示悬浮窗口，并生成相应的命令
 // @match        https://gitcode.net/*
 // @grant        none
@@ -69,6 +69,11 @@
     createFileBtn.innerHTML = '生成新建文件命令';
     floatingWindow.appendChild(createFileBtn);
 
+    var copyBtn = document.createElement('button');
+    copyBtn.innerHTML = '复制内容';
+    floatingWindow.appendChild(copyBtn);
+
+
     // 点击小球显示悬浮窗口
     floatingBall.addEventListener('click', function() {
         floatingWindow.style.display = 'block';
@@ -109,6 +114,22 @@
 
         var cmdCommandString = cmdCommands.join(';');
         outputBox.value = cmdCommandString;
+    });
+
+    // 当点击复制按钮时复制内容
+    copyBtn.addEventListener('click', function() {
+        outputBox.select();
+        document.execCommand('copy');
+    });
+
+    // 点击复制后展示复制成功提示信息
+    outputBox.addEventListener('copy', function(event) {
+        event.preventDefault();
+        if (event.clipboardData) {
+            event.clipboardData.setData('text/plain', outputBox.value);
+            console.log('内容已复制：', outputBox.value);
+            alert('内容已复制！');
+        }
     });
 
     // 点击空白处关闭悬浮窗口
