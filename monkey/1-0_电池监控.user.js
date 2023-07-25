@@ -2,7 +2,7 @@
 // @name         电池监控🪫
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  胶囊型电量显示 ,不阻碍点击，低电量页面提示/系统通知，尝试解决http不支持方案，防止被导航栏遮住
+// @description  胶囊型电量显示 ,不阻碍点击，低电量页面提示/系统通知，http也能出来，防止被导航栏遮住
 // @author       mxk-zwh
 // @match        https://*/*
 // @match        http://*/*
@@ -88,8 +88,9 @@ var notification={
 var way={
     battery:()=>{
         var timeTip=document.querySelector('.batteryShape .battery.bflex');// 使用时间
-        var pt = document.querySelector('.batteryShape .battery .bbb .ccc');// 电量
+        var pt = document.querySelector('.batteryShape .battery .bbb .set_battery_state');// 电量
         var p = document.querySelector('.batteryShape .battery .dianliang');// 电量值
+        var element = document.querySelector('.center.showTooltips');
         try{
             // https
             navigator.getBattery().then(function(battery) {
@@ -101,6 +102,7 @@ var way={
                 if(time){GM_setValue('时长',time)}
                 pt.style.width = bfvalue + "%";
                 timeTip.title=`电量状态:${pt.style.width} ${time}`
+                element.innerHTML = `电量状态:${pt.style.width} ${time}`
                 p.innerHTML = bfvalue
                 //充电状态
                 var charging = battery.charging ? "yes" : "no";
@@ -125,6 +127,7 @@ var way={
                     time=(battery.dischargingTime !== Infinity)? formatTime(parseInt(battery.dischargingTime)): "\n可用（电源已接通）";
                     if(time){GM_setValue('时长',time)}
                     timeTip.title=`电量状态:${pt.style.width} ${time}`
+                    element.innerHTML = `电量状态:${pt.style.width} ${time}`
                     p.innerHTML = bfvalue
                     //电量系统通知 一次: 充满 没电
                     const cd = battery.charging ? 'yes' : 'no';
@@ -140,6 +143,7 @@ var way={
                                     type: 'danger',
                                     text: "快没电了，快去充电啊~"
                                 });
+                                element.innerHTML ="快没电了，快去充电啊~"
                             }
                             if(bfvalue<=low){
                                 //低电量颜色
@@ -149,6 +153,7 @@ var way={
                                     type: 'warning',
                                     text: "电量少，快去充电啊~"
                                 });
+                                element.innerHTML ="电量少，快去充电啊~"
                             }
                         },3000)
                     }
@@ -158,7 +163,7 @@ var way={
                     time=(battery.dischargingTime !== Infinity)? formatTime(parseInt(battery.dischargingTime)): "\n可用（电源已接通）";
                     if(time){GM_setValue('时长',time)}
                     timeTip.title=`电量状态:${pt.style.width} ${time}`
-
+                    element.innerHTML = `电量状态:${pt.style.width} ${time}`
                     const cd = battery.charging ? 'yes' : 'no';
                     GM_setValue('充电吗',cd)
                     if (cd === 'yes'){
@@ -166,6 +171,7 @@ var way={
                             type: 'success',
                             text: "在充电"
                         });
+                        element.innerHTML ="在充电"
                         //充电颜色
                         pt.style.background="#49b216";
                         $('.batteryShape .battery .batteryTime .vvvv').show();
@@ -185,7 +191,7 @@ var way={
             p.innerHTML = bfvalue
 
             timeTip.title=`电量状态:${pt.style.width} ${GM_getValue('时长')}`;
-
+            element.innerHTML = `电量状态:${pt.style.width} ${GM_getValue('时长')}`
             const  cd=GM_getValue('充电吗')
             //充电
             if (cd == 'yes'){
@@ -204,7 +210,7 @@ var way={
                 BatteryLog(bfvalue);
 
                 timeTip.title=`电量状态:${pt.style.width} ${GM_getValue('时长')}`
-
+                element.innerHTML =`电量状态:${pt.style.width} ${GM_getValue('时长')}`
                 var cd=GM_getValue('充电吗')
                 //充电
                 if (cd == 'yes'){
@@ -245,20 +251,20 @@ var way={
         <link rel="stylesheet" href="//at.alicdn.com/t/font_1117508_wxidm5ry7od.css">
         <div class="batteryShape bflex">
             <div class="left bflex">
-                <div id="myclock"></div>
+                <div id="current_time"></div>
             </div>
-            <div class="center">
+            <div class="center showTooltips">
             </div>
             <div class="right bflex">
                 <div class="battery bflex">
                     <div class="bbb bflex">
-                        <div class="ccc"></div>
+                        <div class="set_battery_state"></div>
 
                     </div>
                     <div class="batteryTime">
                     ${icon}
                     </div>
-                    <div class="shabi">
+                    <div class="battery_level">
                         <div class="dianliang">99</div>
                         <div class="baifenhao">${baifenhao}</div>
                     </div>
@@ -310,13 +316,18 @@ var way={
                     font-weight: bold;
                     letter-spacing: 1px;
                 }
-                .batteryShape .left #myclock{
+                .batteryShape .left #current_time{
                     font-weight: bold;
+                }
+                .batteryShape .center{
+                 margin: 0 auto;
+                 text-align:center;
                 }
                 .batteryShape .right{
                     padding: 2px;
                     border-radius: 5px;
                     margin-right: 4px;
+                    margin-left: auto;
                 }
                 .batteryShape .right:hover{
                     background: #9366e340;
@@ -324,7 +335,7 @@ var way={
                 .batteryShape .right .battery{
                      margin-right: 5px;
                 }
-                .shabi{
+                .battery_level{
                     display:flex;
                 }
                 .batteryShape .right .battery .dianliang{
@@ -346,7 +357,7 @@ var way={
                     box-sizing: content-box;
                     overflow: hidden;
                 }
-                .batteryShape .right .ccc{
+                .batteryShape .right .set_battery_state{
                     height: 15px;
                     background: white;
                     background-size: 38px 26px;
@@ -418,7 +429,7 @@ var way={
         const formattedMonth = today.getMonth() + 1;
         const formattedDate = today.getDate();
 
-        const clockElement = document.getElementById("myclock");
+        const clockElement = document.getElementById("current_time");
         const leftElement=document.querySelector(".batteryShape .left");
         const clock= `${notification.ampm}${formattedHour}:${formattedMinute}  ${formattedMonth}月${formattedDate}日  ${weekday}`;
         clockElement.innerHTML = clock;
