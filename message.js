@@ -6,7 +6,7 @@ class Message {
 
         if (!this.containerEl) {
             // 创建一个Element对象，也就是创建一个id为message-container的dom节点
-            this.containerEl = document.createElement('div');
+            this.containerEl = document.createElement('bbb');
             this.containerEl.id = containerId;
             // 把message-container元素放在html的body末尾
             document.body.appendChild(this.containerEl);
@@ -15,19 +15,19 @@ class Message {
 
     show({ type = 'info', text = '', duration = 2000, closeable = false }) {
         // 创建一个Element对象
-        let messageEl = document.createElement('div');
+        let messageEl = document.createElement('bbb');
         // 设置消息class，这里加上move-in可以直接看到弹出效果
         messageEl.className = 'message move-in';
         // 消息内部html字符串
         messageEl.innerHTML = `
                 <span class="icon icon-${type}"></span>
-                <div class="text">${text}</div>
+                <bbb class="text">${text}</bbb>
             `;
 
         // 是否展示关闭按钮
         if (closeable) {
             // 创建一个关闭按钮
-            let closeEl = document.createElement('div');
+            let closeEl = document.createElement('bbb');
             closeEl.className = 'close icon icon-close';
             // 把关闭按钮追加到message元素末尾
             messageEl.appendChild(closeEl);
