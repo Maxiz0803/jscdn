@@ -128,44 +128,8 @@ const message = new Message();
 GM_addStyle(GM_getResourceText("css"));
 GM_addStyle(GM_getResourceText("xcss"));
 let t;
-a.clickEvent();
-
 const a={
-    clickEvent(){
-        $('#b-cancel-follow .cancel-hand').click(function(){
-            this.unfollow_4()
-        })
-        $('#b-cancel-follow .clean_unuid').click(function(){
-            this.clean_unuid()
-        })
-        $('#b-cancel-follow .next-page').click(function(){
-            this.next()
-        })
-        $('#b-cancel-follow .cancel-auto').click(function(){
-            $('#b-cancel-follow .cancel-auto').hide()
-            $('#b-cancel-follow .clean_unuid').hide()
-            $('#b-cancel-follow .next-page').hide()
-            $('#b-cancel-follow .auto-cancel').show()
-            $('#b-cancel-follow .cancel-hand').hide()
-            t = setInterval(()=>{this.unfollow_4()}, 5000)
-            message.show({
-                type: 'success',
-                text: '已开启自动取关'
-            });
-        })
-        $('#b-cancel-follow .auto-cancel').click(function(){
-            $('#b-cancel-follow .auto-cancel').hide()
-            $('#b-cancel-follow .clean_unuid').show()
-            $('#b-cancel-follow .cancel-auto').show()
-            $('#b-cancel-follow .cancel-hand').show()
-            $('#b-cancel-follow .next-page').show()
-            clearInterval(t)
-            message.show({
-                type: 'warning',
-                text: '已关闭自动取关'
-            });
-        })
-    },
+
     unfollow_4(){
         if($(".be-dropdown-item:contains('取消关注')").length>0){
             $(".be-dropdown-item:contains('取消关注'):lt(4)").click();
@@ -181,7 +145,7 @@ const a={
         }
 
     },
-    clean_unuid(){
+    ClearLogged (){
         var zx=$("span.fans-name:contains('账号已注销')").length
 
         if(zx>0){
@@ -239,5 +203,41 @@ const a={
             });
         }
 
+    },
+    clickEvent(){
+        $('#b-cancel-follow .cancel-hand').click(()=>{
+            this.unfollow_4();
+        })
+        $('#b-cancel-follow .clean_unuid').click(()=>{
+            this.ClearLogged();
+        })
+        $('#b-cancel-follow .next-page').click(()=>{
+            this.next();
+        })
+        $('#b-cancel-follow .cancel-auto').click(()=>{
+            $('#b-cancel-follow .cancel-auto').hide()
+            $('#b-cancel-follow .clean_unuid').hide()
+            $('#b-cancel-follow .next-page').hide()
+            $('#b-cancel-follow .auto-cancel').show()
+            $('#b-cancel-follow .cancel-hand').hide()
+            t = setInterval(()=>{this.unfollow_4()}, 5000)
+            message.show({
+                type: 'success',
+                text: '已开启自动取关'
+            });
+        })
+        $('#b-cancel-follow .auto-cancel').click(()=>{
+            $('#b-cancel-follow .auto-cancel').hide()
+            $('#b-cancel-follow .clean_unuid').show()
+            $('#b-cancel-follow .cancel-auto').show()
+            $('#b-cancel-follow .cancel-hand').show()
+            $('#b-cancel-follow .next-page').show()
+            clearInterval(t)
+            message.show({
+                type: 'warning',
+                text: '已关闭自动取关'
+            });
+        })
     }
 }
+a.clickEvent();
