@@ -114,8 +114,8 @@
                 console.log(`剩余: ${dischargingTime}`);
             }
             function notification(){
-                if(isCharging=="yes"&&level>90){
-                    GM_notification(tipsContent_win.success)
+                if(isCharging=="yes"){
+                    if(level>90)GM_notification(tipsContent_win.success)
                 }else{
                     if(level<=40){GM_notification(tipsContent_win.warning)}else if(level<=20){GM_notification(tipsContent_win.danger)}
                 }
@@ -185,8 +185,8 @@
             console.log(`剩余: ${dischargingTime}`);
         }
         function notification(){
-            if(isCharging=="yes"&&level>90){
-                GM_notification(tipsContent_win.success)
+            if(isCharging=="yes"){
+                if(level>90)GM_notification(tipsContent_win.success)
             }else{
                 if(level<=40){GM_notification(tipsContent_win.warning)}else if(level<=20){GM_notification(tipsContent_win.danger)}
             }
