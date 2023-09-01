@@ -32,8 +32,8 @@
         return `${hours > 0 ? `${hours}:` : ''}${minute < 10 ? '0' + minute : minute}:${formatSecond < 10 ? '0' + formatSecond : formatSecond}`
     }
     const tipsContent_win = {
-        warning: {text: "该充电了,不足20",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/93bba0fb2fc3c1ad1ead9a5e4db031ef36f532d5.jpg"}
-        , danger: {text: "快没电了，不足40",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/ba9ce36ef60a53e24a97f54429e62bdb951530a0.jpg"}
+        warning: {text: "该充电了,不足40",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/93bba0fb2fc3c1ad1ead9a5e4db031ef36f532d5.jpg"}
+        , danger: {text: "快没电了，不足20",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/ba9ce36ef60a53e24a97f54429e62bdb951530a0.jpg"}
         , success: {text: "快充满了，超过90",title: "拔掉",timeout: 10000,image: "https://c-ssl.dtstatic.com/uploads/blog/202207/05/20220705231022_cac23.thumb.400_0.jpeg"}
     }
     function method1(){
