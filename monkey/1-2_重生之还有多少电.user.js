@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         电池监控🪫
+// @name         重生之还有多少电🪫
 // @namespace    http://tampermonkey.net/
 // @version      1.2
-// @description  低电量页面提示/系统通知
+// @description  电量页面提示/系统通知
 // @author       mxk-zwh
 // @match        https://*/*
 // @match        http://*/*
@@ -17,11 +17,12 @@
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
 // ==/UserScript==
-
+//编辑器设置 - 仅在顶层页面（框架）运行:是
 (function(){
     $('body').append(`<link rel="stylesheet" href="//at.alicdn.com/t/font_1117508_wxidm5ry7od.css"><bbb id="baba"></bbb>`);
     GM_addStyle(GM_getResourceText("css"));
     var message=new Message();
+
     function formateTime(time) {
         const h = parseInt(time / 3600)
         const minute = parseInt(time / 60 % 60)
@@ -31,13 +32,16 @@
         const formatSecond = second > 59 ? 59 : second
         return `${hours > 0 ? `${hours}:` : ''}${minute < 10 ? '0' + minute : minute}:${formatSecond < 10 ? '0' + formatSecond : formatSecond}`
     }
+
     const tipsContent_win = {
         warning: {text: "该充电了,不足40",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/93bba0fb2fc3c1ad1ead9a5e4db031ef36f532d5.jpg"}
         , danger: {text: "快没电了，不足20",title: "充电",timeout: 10000,image: "https://i0.hdslb.com/bfs/face/ba9ce36ef60a53e24a97f54429e62bdb951530a0.jpg"}
         , success: {text: "快充满了，超过90",title: "拔掉",timeout: 10000,image: "https://c-ssl.dtstatic.com/uploads/blog/202207/05/20220705231022_cac23.thumb.400_0.jpeg"}
     }
+
     function method1(){
         navigator.getBattery().then((battery) => {
+            //初始化
             function updateAllBatteryInfo() {
                 updateChargeInfo();
                 updateLevelInfo();
@@ -45,7 +49,10 @@
                 updateDischargingInfo();
             }
             updateAllBatteryInfo();
+            // 获取的变量
             var isCharging,level,chargingTime,dischargingTime;
+            // 监听器
+            // 充电变化
             battery.addEventListener("chargingchange", () => {
                 updateChargeInfo();
             });
@@ -59,7 +66,7 @@
                 }
                 console.log(`充电? ${isCharging}`);
             }
-
+            // 电量变化
             battery.addEventListener("levelchange", () => {
                 updateLevelInfo();
                 save()
@@ -85,7 +92,7 @@
                 }
                 console.log(`电量: ${level}%`);
             }
-
+            // 充电时间
             // battery.addEventListener("chargingtimechange", () => {
             //     updateChargingInfo();
             // });
@@ -99,7 +106,7 @@
                 }
                 console.log(`还有: ${chargingTime}`);
             }
-
+            // 放电时间
             // battery.addEventListener("dischargingtimechange", () => {
             //     updateDischargingInfo();
             // });
@@ -128,6 +135,7 @@
             }
         });
     }
+
     function method2(){
         var isCharging= GM_getValue('isCharging');
         var level = GM_getValue("level");
@@ -165,6 +173,7 @@
                 })
             }
             console.log(`电量: ${level}%`);
+            notification();
         }
         function updateChargingInfo() {
             if(chargingTime!=Infinity){
@@ -192,6 +201,7 @@
             }
         }
     }
+
     try{
         console.log('method1')
         method1()
