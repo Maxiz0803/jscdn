@@ -20,7 +20,7 @@ class Message {
         messageEl.className = 'message move-in';
         // 消息内部html字符串
         messageEl.innerHTML = `
-                <span class="icon icon-${type}"></span>
+                <span class="icon icon-${type}" style="border:0;"></span>
                 <bbb class="text">${text}</bbb>
             `;
 
