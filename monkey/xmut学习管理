@@ -1,90 +1,217 @@
 // ==UserScript==
 // @name         xmut学习管理
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       You
 // @match        https://xmut.class.gaoxiaobang.com/class/*/unit/*/chapter/*
 // @icon         https://static-gs.class.gaoxiaobang.com/image/favicon/favicon.ico
 // @grant        GM_addStyle
+// @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
 (function() {
     'use strict';
-    $(document).delegate('video', 'DOMNodeInserted', function() {
-        var RATE=3;
-        var PLAY;
+    // 当子节点变化时的处理逻辑
+    // 在这里执行你的函数
+    jQuery.fn.wait = function (func, times, interval) {
+        var _times = times || -1, //100次
+            _interval = interval || 20, //20毫秒每次
+            _self = this,
+            _selector = this.selector, //选择器
+            _iIntervalID; //定时器id
+        if( this.length ){ //如果已经获取到了，就直接执行函数
+            func && func.call(this);
+        } else {
+            _iIntervalID = setInterval(function() {
+                if(!_times) { //是0就退出
+                    clearInterval(_iIntervalID);
+                }
+                _times <= 0 || _times--; //如果是正数就 --
+
+                _self = $(_selector); //再次选择
+                if( _self.length ) { //判断是否取到
+                    func && func.call(_self);
+                    clearInterval(_iIntervalID);
+                }
+            }, _interval);
+        }
+        return this;
+    }
+    function executeUntilSuccess(func, trySpan) {
+        let xs = function () {
+            let succ = true;
+            try {
+                func();
+            }
+            catch (ex) {
+                succ = false;
+            }
+            if (!succ) {
+                setTimeout(xs, trySpan);
+            }
+        };
+        setTimeout(xs, 0);
+    }
+    var RATE=3;
+    var isLoop;
+    let tips={
+        play:'根本停不下来',
+        isloop:'还没有暂停',
+        stop:"已暂停"
+    }
+    executeUntilSuccess(function () {
+
         function showBtn(){
-            var html=`<bbb id="xmut-study"><button id="xmut-play" class="xmut-btn">启动</button>
-            <button id="xmut-pause" class="xmut-btn" style="display:none;">暂停</button></bbb>`;
+            var html=`<bbb id="xmut-study">
+
+            <button id="xmut-play" class="xmut-btn xmut-play">启动</button>
+            <button id="xmut-pause" class="xmut-btn xmut-pause" style="display:none;">暂停</button>
+            <bbb id="xmut-tips" class="tips">还没有暂停</bbb>
+            </bbb>`;
 
             var css=`
-            #xmut-study{width:100px;height:100px;padding:10px;border-radius:10px;position:fixed;z-index:10;right:0;bottom:100px;}
+            #xmut-study{width:100px;height:100px;padding:10px;
+            border-radius:10px;position:fixed;z-index:10;right:0;bottom:100px;}
 
-            #xmut-study .xmut-btn{width:50px;height:50px;border-radius:25px;color:white;border-color:white;}
+            #xmut-study .xmut-btn{
+            width:50px;height:50px;border-radius:25px;color:white;border-color:white;}
 
-             #xmut-study #xmut-play{background-color:#1fb6ff;}
+             #xmut-study .xmut-play{
+             background-color:#1fb6ff;}
 
-             #xmut-study #xmut-pause{background-color:#FC5531;}
+             #xmut-study .xmut-pause{
+             background-color:#FC5531;}
+
+             .tips{
+                 position: absolute;
+                left: -100%;
+                top: 20%;
+                display:block;
+                width: 105px;height: 37px;
+                padding: 9px;
+                text-align: center;
+                border-radius: 12px;
+                -webkit-animation: slide-in-elliptic-right-fwd 0.7s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+                animation: slide-in-elliptic-right-fwd 0.7s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+             }
+
+             .tips-play{
+             background: #fff3f0;box-shadow: #e8938b 0px 4px 7px 0px, #000 0 4px 2px, inset #ff2d1f 0px -4px 5px;}
+
+             .tips-stop{
+             background: #f0fffd;box-shadow: #03A9F4 0px 4px 7px 0px, #000 0 4px 2px, inset #9bd4db 0px -4px 5px;}
+
+             .tips-isloop{
+             background: #f0fff1;box-shadow: #8ee88b 0px 4px 7px 0px, #000 0 4px 2px, inset #23ff1f 0px -4px 5px;}
+
+             @-webkit-keyframes slide-in-elliptic-right-fwd {
+              0% {
+                -webkit-transform: translateX(800px) rotateY(-30deg) scale(0);
+                        transform: translateX(800px) rotateY(-30deg) scale(0);
+                -webkit-transform-origin: -100% 50%;
+                        transform-origin: -100% 50%;
+                opacity: 0;
+              }
+              100% {
+                -webkit-transform: translateX(0) rotateY(0) scale(1);
+                        transform: translateX(0) rotateY(0) scale(1);
+                -webkit-transform-origin: -1800px 50%;
+                        transform-origin: -1800px 50%;
+                opacity: 1;
+              }
+            }
+            @keyframes slide-in-elliptic-right-fwd {
+              0% {
+                -webkit-transform: translateX(800px) rotateY(-30deg) scale(0);
+                        transform: translateX(800px) rotateY(-30deg) scale(0);
+                -webkit-transform-origin: -100% 50%;
+                        transform-origin: -100% 50%;
+                opacity: 0;
+              }
+              100% {
+                -webkit-transform: translateX(0) rotateY(0) scale(1);
+                        transform: translateX(0) rotateY(0) scale(1);
+                -webkit-transform-origin: -1800px 50%;
+                        transform-origin: -1800px 50%;
+                opacity: 1;
+              }
+            }
+
              `;
-            $('body').append(html);
-            GM_addStyle(css);
+            if($('#xmut-study').length<=1){
+                $('body').append(html);
+                GM_addStyle(css);
+            }
+            $('#xmut-tips').hide();
             $('#xmut-play').click(function(){
-                PLAY=true;
-                $('#xmut-play').hide()
-                $('#xmut-pause').show()
+                isLoop=true;
+                $('#xmut-play').hide();
+                $('#xmut-pause').show();
+                showTips(0)
             })
             $('#xmut-pause').click(function(){
-                PLAY=false;
-                $('#xmut-play').show()
-                $('#xmut-pause').hide()
+                isLoop=false;
+                $('#xmut-play').show();
+                $('#xmut-pause').hide();
+                showTips(2)
             })
         }
-        function jiaSu(rate){
-            videojs("video_player_html5_api").playbackRate(rate||1);
-            console.log('当前倍速:',rate||1);
+        function showTips(n){
+            switch(n){
+                case 0:
+                    $('#xmut-tips').addClass('tips-play')
+                    $('#xmut-tips').text(tips.play);
+                    $('#xmut-tips').show();
+                    setTimeout(()=>{
+                        $('#xmut-tips').hide();
+                        $('#xmut-tips').removeClass('tips-play');
+                    },3000)
+                    break;
+                case 1:
+                    $('#xmut-tips').addClass('tips-isloop')
+                    $('#xmut-tips').text(tips.isloop);
+                    $('#xmut-tips').show();
+                    setTimeout(()=>{
+                        $('#xmut-tips').hide();
+                        $('#xmut-tips').removeClass('tips-isloop')
+                    },3000)
+                    break;
+                case 2:
+                    $('#xmut-tips').addClass('tips-stop')
+                    $('#xmut-tips').text(tips.stop);
+                    $('#xmut-tips').show();
+                    setTimeout(()=>{
+                        $('#xmut-tips').hide();
+                        $('#xmut-tips').removeClass('tips-stop')
+                    },3000)
+                    break;
+            }
         }
-        function play(){
-            videojs("video_player_html5_api").play();
-            console.log('正在播放')
-        }
-        function pause(){
-            videojs("video_player_html5_api").pause();
-            console.log('暂停播放')
-        }
-        function addListener(){
-            var elevideo = document.getElementById("video_player_html5_api");
-            elevideo.addEventListener('loadedmetadata', function () { //加载数据
-                //视频的总长度
-                console.log(elevideo.duration);
-            });
-            elevideo.addEventListener('play', function () { //播放开始执行的函数
-                console.log("开始播放");
-            });
-            elevideo.addEventListener('playing', function () { //播放中
-                console.log("播放中");
-            });
-            elevideo.addEventListener('waiting', function () { //加载
-                console.log("加载中");
-            });
-            elevideo.addEventListener('pause', function () { //暂停开始执行的函数
-                console.log("暂停播放");
-                if(PLAY){
-                    jiaSu(RATE);
-                    play();
-                }else{
-                    pause()
+        function addEventer(){
+            let player=$("#video_player_html5_api");
+            let playerjs=videojs("video_player_html5_api");
+            player.on('dblclick',()=>{
+                if(isLoop){
+                    showTips(1)
                 }
-            });
-            elevideo.addEventListener('ended', function () { //结束
-                console.log("播放结束");
+            })
+            player.on('pause',()=>{
+                if(isLoop){
+                    playerjs.play()
 
-            }, false);
+                    console.log('停不下来')
+                }else{
+                    console.log('停下来')
+                }
+            })
         }
+        $("#video_player_html5_api").wait(function() {
+            addEventer()
+            showBtn()
+        });
 
-        addListener();
-        showBtn();
-    });
-
+    },100)
     // Your code here...
 })();
