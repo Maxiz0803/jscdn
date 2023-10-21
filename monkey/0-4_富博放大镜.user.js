@@ -393,9 +393,3 @@ if(i==1){
     // setInterval(function(){a.test();},10e3)
     i++
 }
-
-
-// Your code here...
-// https://wx4.sinaimg.cn/large/6544f080gy1gncw98ndsmj23480u0kjx.jpg
-// https://wx4.sinaimg.cn/mw690/6544f080gy1gncw98ndsmj23480u0kjx.jpg
-// https://wx4.sinaimg.cn/mw2000/6544f080gy1gncw98ndsmj23480u0kjx.jpg
