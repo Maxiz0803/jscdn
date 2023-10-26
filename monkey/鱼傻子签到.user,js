@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         鱼聪明签到
+// @name         鱼傻子签到
 // @namespace    http://tampermonkey.net/
 // @version      0.2
-// @description  每日鱼毛领取，剩余鱼毛
+// @description  每日鱼毛领取，查看剩余鱼毛
 // @author       mxk-zwh
 // @match        https://www.yucongming.com/*
 // @match        https://cn.bing.com/*
@@ -21,6 +21,7 @@
 // 时间-行为
 (function() {
     'use strict';
+    //当前日期
     function curDate(){
         var now = new Date();
         // 获取当前日期和时间
@@ -39,11 +40,13 @@
                 text: "点击跳转网页",
                 image: imageUrl,
                 timeout: 10000,
+                //系统弹窗点击事件
                 onclick: ()=>{GM_openInTab("https://www.yucongming.com/chat")}
             })
         }
     }
     //在与聪明下面 作案
+    //羽毛
     function getUserinfo(){
         return new Promise((resolve,reject)=>{
             GM_xmlhttpRequest({
@@ -66,6 +69,7 @@
             });
         })
     }
+    //签到
     function daily(){
         return new Promise((resolve,reject)=>{
             GM_xmlhttpRequest({
@@ -88,30 +92,39 @@
             });
         })
     }
+    let icon=`<div class="ant-space-item" style=""><img alt="鱼毛" src="/static/fish.c8221386.svg" width="14"></div>`;
+    //按钮 样式在这里改
     function buildBtn(){
         let div=document.createElement("div");
         div.id="sign-div";
-        div.setAttribute('style', 'position: fixed;width: 100px;height: 20px;left: 30%;top: 16px;'+
-                         'z-index: 10;display: flex;flex-direction: column;align-items: center;');
+        div.setAttribute('style', 'position: fixed;left: 31%;top: 1px;'+
+                         'z-index: 10;background: #22a9994a;padding: 7px;border-radius: 9px;'+
+                         'display: flex;flex-direction: column;align-items: center;');
 
         let button=document.createElement("button")
         button.id="toSign";
-        button.className="ant-btn ant-btn-round ant-btn-danger";
+        button.className="ant-btn ant-btn-round ant-btn-danger ant-btn-sm";
         button.innerText="每日签到";
 
+
         let span=document.createElement("span");
-        getUserinfo().then((res)=>{
-            span.innerText="鱼毛："+res.response.data.leftNum;
-        }).catch(err=>{
-            span.innerText="error!";
-            console.log('info err',err)
-        });
         span.className="ant-tag ant-tag-blue yu-mao-tag";
         span.setAttribute('style', 'border: none;margin: 0px;border-radius: 12px;');
 
+        let div1=document.createElement("div");
+        div1.innerHTML=icon;
+        getUserinfo().then((res)=>{
+            div1.innerHTML=icon+`<div class="ant-space-item"><span style="color: rgb(6, 145, 254);">${res.response.data.leftNum}</span></div>`;
+        }).catch(err=>{
+            div1.innerHTML="error!";
+            console.log('info err',err)
+        });
+        div1.className="ant-space ant-space-horizontal ant-space-align-center";
+        div1.setAttribute('style', 'gap: 2px;');
+
+        span.appendChild(div1);
         div.appendChild(span);
         div.appendChild(button);
-
         if(!document.querySelector("button#toSign")){
             document.querySelector('body').appendChild(div);
         }
@@ -119,6 +132,8 @@
 
     function eventBtn(){
         let btnToSign=document.querySelector("button#toSign");
+        let div1=document.querySelector("div#sign-div span>div");
+        //按钮事件
         btnToSign.ondblclick=function(){
             daily().then((res)=>{
                 switch(res.response.code){
@@ -133,7 +148,7 @@
                         })
                         //无法点击
                         document.getElementById("toSign").disabled=true;
-                        document.getElementById("toSign").innerText="今天签过了";
+                        document.getElementById("toSign").innerText="签过了";
                         break;
                     case 50001:
                         GM_setValue('signed_date',curDate());
@@ -145,7 +160,7 @@
                         })
                         //无法点击
                         document.getElementById("toSign").disabled=true;
-                        document.getElementById("toSign").innerText="今天签过了";
+                        document.getElementById("toSign").innerText="签过了";
                         break;
                     case 40100:
                         GM_notification({
@@ -165,18 +180,27 @@
                         })
                         break;
                 }
-                let span=document.querySelector("div#sign-div span")
-                getUserinfo().then((resp)=>{
-                    span.innerText="鱼毛："+resp.response.data.leftNum;
-                }).catch(erro=>{
-                    span.innerText="error!";
-                    console.log('info err',erro)
+                //剩余数量
+                getUserinfo().then((res)=>{
+                    div1.innerHTML=icon+`<div class="ant-space-item"><span style="color: rgb(6, 145, 254);">${res.response.data.leftNum}</span></div>`;
+                }).catch(err=>{
+                    div1.innerHTML="error!";
+                    console.log('info err',err)
                 });
             }).catch(err=>{
                 console.log('sign err',err)//1秒后打印 error message
             })
         };
-
+        span.ondblclick=function(){
+            //剩余数量
+            getUserinfo().then((res)=>{
+                div1.innerHTML=icon+`<div class="ant-space-item"><span style="color: rgb(6, 145, 254);">${res.response.data.leftNum}</span></div>`;
+            }).catch(err=>{
+                div1.innerHTML="error!";
+                console.log('info err',err)
+            });
+        }
+        //显示tooltip
         btnToSign.onmouseover=function(){
             setTimeout(()=>{
                 document.querySelector("div#tooltip").classList.remove('ant-tooltip-hidden');
@@ -191,12 +215,13 @@
 
         }
     }
-
+    //<div class="ant-space ant-space-horizontal ant-space-align-center" style="gap: 2px;"></div>
+    //提示的样式
     function tooltip(){
         let div=document.createElement("div");
         div.id="tooltip";
-        div.className="ant-tooltip ant-tooltip-placement-bottom ant-tooltip-hidden";
-        div.setAttribute('style', 'left: 25%;position: fixed;top: 68px;transform-origin: 50% 96.3125px;pointer-events: none;');
+        div.className="ant-tooltip ant-tooltip-placement-left ant-tooltip-hidden";
+        div.setAttribute('style', 'left: 14%;position: fixed;top: 3px;transform-origin: 50% 96.3125px;pointer-events: none;');
         div.innerHTML=`<div class="ant-tooltip-content">
                         <div class="ant-tooltip-arrow">
                         <span class="ant-tooltip-arrow-content"></span></div>
