@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         鱼傻子签到
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  每日鱼毛领取，查看剩余鱼毛
 // @author       mxk-zwh
 // @match        https://www.yucongming.com/*
@@ -69,6 +69,28 @@
             });
         })
     }
+    function getLogin(){
+        return new Promise((resolve,reject)=>{
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: 'https://www.yucongming.com/api/user/get/login',
+                responseType: "json",
+                onload: function(res){
+                    if(res.status === 200){
+                        console.log('成功')
+                        resolve(res)
+                    }else{
+                        console.log('失败')
+                        resolve(res)
+                    }
+                },
+                onerror : function(err){
+                    console.log('error')
+                    reject(err)
+                }
+            });
+        })
+    }
     //签到
     function daily(){
         return new Promise((resolve,reject)=>{
@@ -94,18 +116,29 @@
     }
     let icon=`<div class="ant-space-item" style=""><img alt="鱼毛" src="/static/fish.c8221386.svg" width="14"></div>`;
     //按钮 样式在这里改
-    function buildBtn(){
+
+    async function buildBtn(){
         let div=document.createElement("div");
         div.id="sign-div";
-        div.setAttribute('style', 'position: fixed;left: 31%;top: 1px;'+
-                         'z-index: 10;background: #22a9994a;padding: 7px;border-radius: 9px;'+
-                         'display: flex;flex-direction: column;align-items: center;');
+        div.setAttribute('style', 'position: fixed;left: 1%;    bottom: 3%;'+
+                         'z-index: 10;background: #e7f7ff;padding: 7px;border-radius: 9px;'+
+                         'display: flex;align-items: center;border:1px solid #152da5;');
 
+        let res=await getLogin();
+        let userName=res.response.data.userName;
+        console.log(userName)
+        console.log(GM_getValue('userName'))
         let button=document.createElement("button")
         button.id="toSign";
         button.className="ant-btn ant-btn-round ant-btn-danger ant-btn-sm";
         button.innerText="每日签到";
-
+        if(GM_getValue('signed_date')!=null
+           &&GM_getValue('signed_date')==curDate()
+           &&GM_getValue('userName')!=null
+           &&GM_getValue('userName')==userName){
+            button.disabled=true;
+            button.innerText="领过了";
+        }
 
         let span=document.createElement("span");
         span.className="ant-tag ant-tag-blue yu-mao-tag";
@@ -123,11 +156,13 @@
         div1.setAttribute('style', 'gap: 2px;');
 
         span.appendChild(div1);
-        div.appendChild(span);
         div.appendChild(button);
+        div.appendChild(span);
+
         if(!document.querySelector("button#toSign")){
             document.querySelector('body').appendChild(div);
         }
+        eventBtn()
     }
 
     function eventBtn(){
@@ -140,6 +175,7 @@
                     case 0:
                         //签到成功，记录日期
                         GM_setValue('signed_date',curDate());
+
                         GM_notification({
                             title: res.response.message,
                             text: "Ok",
@@ -187,11 +223,21 @@
                     div1.innerHTML="error!";
                     console.log('info err',err)
                 });
+                getLogin().then((resp)=>{
+                    GM_setValue('userName',resp.response.data.userName);
+                }).catch(err=>{
+                    GM_notification({
+                        title: "What's Up?",
+                        text: err,
+                        image: imageUrl,
+                        timeout: 10000
+                    })
+                });
             }).catch(err=>{
                 console.log('sign err',err)//1秒后打印 error message
             })
         };
-        span.ondblclick=function(){
+        div1.ondblclick=function(){
             //剩余数量
             getUserinfo().then((res)=>{
                 div1.innerHTML=icon+`<div class="ant-space-item"><span style="color: rgb(6, 145, 254);">${res.response.data.leftNum}</span></div>`;
@@ -220,8 +266,8 @@
     function tooltip(){
         let div=document.createElement("div");
         div.id="tooltip";
-        div.className="ant-tooltip ant-tooltip-placement-left ant-tooltip-hidden";
-        div.setAttribute('style', 'left: 14%;position: fixed;top: 3px;transform-origin: 50% 96.3125px;pointer-events: none;');
+        div.className="ant-tooltip ant-tooltip-placement-top ant-tooltip-hidden";
+        div.setAttribute('style', '    left: 1%;position: fixed;bottom: 8%;transform-origin: 50% 96.3125px;pointer-events: none;');
         div.innerHTML=`<div class="ant-tooltip-content">
                         <div class="ant-tooltip-arrow">
                         <span class="ant-tooltip-arrow-content"></span></div>
@@ -242,7 +288,6 @@
                 let match=location.href.match(/(\d+)/);
                 if(match) console.log("当前对话id = "+match[0]);
                 buildBtn();
-                eventBtn();
                 tooltip();
             }else{
                 document.querySelector("div#sign-div")?.remove();
@@ -253,7 +298,7 @@
     }
     curDialog()
     //路由变化
-    let old=history.pushState
+    let old=history.pushState;
     history.pushState=function(...arg){
         console.log("路由发生变化");
         curDialog();
