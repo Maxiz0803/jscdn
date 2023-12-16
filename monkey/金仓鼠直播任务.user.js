@@ -17,9 +17,9 @@
 // @connect      pay.bilibili.com
 // @connect      api.bilibili.com
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
-// @require      https://cdn.jsdelivr.net/gh/mxk-zwh/jscdn/asset/echo.min.js
-// @require      https://cdn.jsdelivr.net/gh/mxk-zwh/jscdn/asset/jquery-ui-1.9.2.custom.min.js
-// @require      https://cdn.jsdelivr.net/gh/andywang425/BLTH/assets/js/library/BilibiliAPI_Mod.min.js
+// @require      https://ghproxy.net/https://raw.githubusercontent.com/mxk-zwh/jscdn/asset/echo.min.js
+// @require      https://ghproxy.net/https://raw.githubusercontent.com/mxk-zwh/jscdn/asset/jquery-ui-1.9.2.custom.min.js
+// @require      https://ghproxy.net/https://raw.githubusercontent.com/gh/andywang425/BLTH/assets/js/library/BilibiliAPI_Mod.min.js
 
 // ==/UserScript==
 //金仓鼠
